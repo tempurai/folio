@@ -1,0 +1,6 @@
+model = "gpt-5-codex"
+approval_policy = "on-request"
+
+[mcp_servers.fs]
+command = "npx"
+args = ["-y", "server-fs"]

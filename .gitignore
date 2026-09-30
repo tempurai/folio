@@ -1,0 +1,9 @@
+node_modules
+dist
+out
+*.log
+.DS_Store
+*.bak-*
+state/
+gui-mock/node_modules
+gui-mock/dist

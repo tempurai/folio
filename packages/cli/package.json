@@ -1,0 +1,45 @@
+{
+  "name": "@tememory/cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "tememory command-line interface: init, sync, watch, search, organize, serve, and MCP install for the local AI-coding memory bank.",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "ai",
+    "mcp",
+    "claude-code",
+    "codex",
+    "cursor",
+    "electron",
+    "llm"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "tememory": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "pretest": "pnpm --filter @tememory/cli... build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tememory/core": "workspace:*",
+    "@tememory/mcp-server": "workspace:*",
+    "chokidar": "4.0.3",
+    "commander": "13.1.0",
+    "smol-toml": "1.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

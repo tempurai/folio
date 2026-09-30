@@ -1,0 +1,34 @@
+{
+  "name": "@tememory/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Domain core for tememory: harness adapters, file-based memory store, incremental sync, full-text search, LLM-assisted organize, and MCP install helpers.",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "gray-matter": "4.0.3",
+    "smol-toml": "1.9.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

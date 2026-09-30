@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "web": { "command": "uvx", "args": ["web-mcp"] }
+  },
+  "locale": "zh-CN"
+}

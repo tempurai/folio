@@ -1,0 +1,9 @@
+---
+description: Alpha 项目规则
+globs: ["src/**/*.ts", "test/**/*.ts"]
+alwaysApply: false
+---
+
+# Alpha 项目规则
+
+- 本项目禁用 default export。

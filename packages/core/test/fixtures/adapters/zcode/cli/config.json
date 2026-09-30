@@ -1,0 +1,9 @@
+{
+  "theme": "dark",
+  "mcp": {
+    "timeoutMs": 5000,
+    "servers": {
+      "fs": { "command": "npx", "args": ["-y", "server-fs"] }
+    }
+  }
+}

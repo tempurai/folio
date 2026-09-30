@@ -1,0 +1,9 @@
+---
+description: TypeScript 规则
+globs: ["**/*.ts"]
+alwaysApply: true
+---
+
+# TypeScript 规则
+
+- 禁止使用 any。

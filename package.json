@@ -1,0 +1,37 @@
+{
+  "name": "tememory-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal memory hub that unifies memories from AI coding harnesses (Claude Code, Codex, Cursor, Kimi Code, ZCode) into one local file-based memory bank, served back over MCP.",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "ai",
+    "mcp",
+    "claude-code",
+    "codex",
+    "cursor",
+    "electron",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lincan/tememory.git"
+  },
+  "homepage": "https://github.com/lincan/tememory#readme",
+  "bugs": "https://github.com/lincan/tememory/issues",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r --workspace-concurrency=1 test"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "6.4.3"
+    }
+  }
+}
