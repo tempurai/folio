@@ -1,6 +1,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
+import { adapters as builtinAdapters } from './adapters/index.js';
 import type { HarnessAdapter } from './adapters/types.js';
 import { ensureHome, loadConfig } from './config.js';
 import { createLlmClient } from './llm.js';
@@ -199,19 +200,7 @@ async function classifyMemory(
 }
 
 async function loadBuiltinAdapters(): Promise<HarnessAdapter[]> {
-  try {
-    const specifier = './adapters/index.js';
-    const mod: unknown = await import(specifier);
-    const candidate = mod as {
-      adapters?: unknown;
-      allAdapters?: unknown;
-      default?: unknown;
-    };
-    const list = candidate.adapters ?? candidate.allAdapters ?? candidate.default;
-    return Array.isArray(list) ? (list as HarnessAdapter[]) : [];
-  } catch {
-    return [];
-  }
+  return builtinAdapters;
 }
 
 export async function runSync(opts: SyncOptions): Promise<SyncReport> {

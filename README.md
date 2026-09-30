@@ -50,11 +50,11 @@ Every harness keeps its own memory/rules store, in incompatible formats that nev
 ## Quick start
 
 ```bash
-# Build (monorepo: core / cli / mcp-server)
-pnpm install
-pnpm -r build
+# Install from npm (self-contained bundle, zero runtime deps)
+npm i -g folio-memory        # gives you the `folio` command
 
-# Install the CLI globally (pick one)
+# Or build from source (monorepo: core / cli / mcp-server)
+pnpm install && pnpm -r build
 npm i -g packages/cli        # or: cd packages/cli && pnpm link --global
 
 # Four steps

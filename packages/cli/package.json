@@ -1,9 +1,8 @@
 {
-  "name": "@folio/cli",
-  "version": "0.0.1",
-  "private": true,
+  "name": "folio-memory",
+  "version": "0.1.0",
   "type": "module",
-  "description": "folio command-line interface: init, sync, watch, search, organize, serve, and MCP install for the local AI-coding memory bank.",
+  "description": "folio — unified local memory library for AI coding harnesses (file-based, MCP-served). CLI: init, sync, watch, organize, serve.",
   "license": "MIT",
   "keywords": [
     "memory",
@@ -29,17 +28,18 @@
     "pretest": "pnpm --filter @folio/cli... build",
     "test": "vitest run"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4",
     "@folio/core": "workspace:*",
     "@folio/mcp-server": "workspace:*",
     "chokidar": "4.0.3",
     "commander": "13.1.0",
     "smol-toml": "1.9.0"
   },
-  "devDependencies": {
-    "@types/node": "18.19.130",
-    "tsup": "8.5.1",
-    "typescript": "5.9.3",
-    "vitest": "3.2.4"
+  "publishConfig": {
+    "access": "public"
   }
 }

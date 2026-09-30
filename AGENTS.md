@@ -20,7 +20,7 @@ packages/
     src/llm.ts       OpenAI 兼容客户端（原生 fetch，30s 超时，重试 2 次）
     src/paths.ts     FOLIO_HOME 解析（--home > FOLIO_HOME > ~/.folio）
     src/index.ts     冻结公共 API（见「硬约束」）
-  cli/           @folio/cli —— commander CLI，bin: dist/cli.js
+  cli/           folio-memory —— commander CLI，bin: dist/cli.js；npm 上唯一发布的包（core/mcp-server 与全部依赖经 tsup 打进单文件，发布包零运行时依赖）
   mcp-server/    @folio/mcp-server —— stdio MCP server（5 工具 + memory://index 资源）
   desktop/       @folio/desktop —— Electron 桌面端（开发中）
     src/shared/ipc.ts   IPC 契约：通道常量 + 请求/响应类型 + zod schemas（main/preload/renderer 三方共享，只许 import type 引 core）
@@ -52,7 +52,7 @@ docker run --rm folio-e2e
 
 1. **Node 18 兼容**：`engines.node >= 18`，tsup `target: node18`，`@types/node` 锁 18.x。**新增依赖前必须查其 `engines`**，凡是要求 Node ≥20 的一律不用（或锁到兼容旧版）。只用 Node 18 已有的 API（如全局 `fetch` 可用，`Array.prototype.toSorted` 不可用）。
 2. **ESM**：源码内相对 import 必须带 `.js` 后缀；禁止引入 CommonJS-only 依赖。
-3. **`@folio/core` 公共 API 冻结**：`packages/core/src/index.ts` 的导出清单对外冻结——cli、mcp-server 与未来的 Go/REST 层都依赖它。新增导出可以，**改名/删除/改语义必须全仓库同步并更新本文件**。注意 `sync.ts` 靠动态 `import('./adapters/index.js')` 找内置适配器，core 的 tsup 双入口（`src/index.ts` + `src/adapters/index.ts`）不能动。
+3. **`@folio/core` 公共 API 冻结**：`packages/core/src/index.ts` 的导出清单对外冻结——cli、mcp-server 与未来的 Go/REST 层都依赖它。新增导出可以，**改名/删除/改语义必须全仓库同步并更新本文件**。注意 `sync.ts` 用静态 `import` 加载内置适配器（保证 cli 单文件打包可行），core 的 tsup 双入口（`src/index.ts` + `src/adapters/index.ts`）不能动。
 4. **适配器只读**：`collect()` 只允许读 harness 目录，绝不写、改、删 harness 的任何文件。唯一的例外是 `install`/`uninstall` 命令对 MCP 配置文件的写入，且写前必须备份（`<文件>.bak-<时间戳>`）。敏感目录不碰：codex 的 `memories_extensions/`、各家的 sessions/history。
 5. **不在宿主机安装 harness**：任何真实 harness CLI（claude/codex/kimi 等）只允许装进 Docker 镜像（见 `docker/Dockerfile`）。宿主机上调试一律用 `packages/core/test/fixtures/` 或临时目录伪造 home。
 6. 命令 stdout 纪律：`serve` 的 stdout 是 MCP 协议通道，任何日志只能走 `console.error`；`--json` 模式下 stdout 只输出 JSON。

@@ -12,13 +12,16 @@ importers:
   .: {}
 
   packages/cli:
-    dependencies:
+    devDependencies:
       '@folio/core':
         specifier: workspace:*
         version: link:../core
       '@folio/mcp-server':
         specifier: workspace:*
         version: link:../mcp-server
+      '@types/node':
+        specifier: 18.19.130
+        version: 18.19.130
       chokidar:
         specifier: 4.0.3
         version: 4.0.3
@@ -28,10 +31,6 @@ importers:
       smol-toml:
         specifier: 1.9.0
         version: 1.9.0
-    devDependencies:
-      '@types/node':
-        specifier: 18.19.130
-        version: 18.19.130
       tsup:
         specifier: 8.5.1
         version: 8.5.1(jiti@1.21.7)(postcss@8.5.28)(typescript@5.9.3)

@@ -48,11 +48,11 @@
 ## 快速开始
 
 ```bash
-# 构建（monorepo：core / cli / mcp-server 三个包）
-pnpm install
-pnpm -r build
+# 从 npm 安装（自包含单文件，零运行时依赖）
+npm i -g folio-memory        # 安装后得到 folio 命令
 
-# 安装 CLI 到全局（二选一）
+# 或从源码构建（monorepo：core / cli / mcp-server 三个包）
+pnpm install && pnpm -r build
 npm i -g packages/cli        # 或者：cd packages/cli && pnpm link --global
 
 # 四步走
