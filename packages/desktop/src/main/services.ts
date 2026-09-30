@@ -20,7 +20,7 @@ import {
   runSync,
   slugify,
   uninstallMcpServer,
-} from '@tememory/core';
+} from '@folio/core';
 import type {
   ActivityEntry,
   ApplyReport,
@@ -32,9 +32,9 @@ import type {
   OrganizeOp,
   OrganizePlan,
   SyncReport,
-  TememoryPaths,
-} from '@tememory/core';
-import { MEMORY_TYPES } from '@tememory/core';
+  FolioPaths,
+} from '@folio/core';
+import { MEMORY_TYPES } from '@folio/core';
 import type {
   FileInfo,
   FileReadResponse,
@@ -127,7 +127,7 @@ function maskApiKey(key: string): string {
 }
 
 export interface DesktopServices {
-  readonly paths: TememoryPaths;
+  readonly paths: FolioPaths;
   listTree(): TreeResponse;
   readFile(relPath: string): FileReadResponse;
   readIndex(): string;
@@ -196,13 +196,13 @@ export function createServices(opts: ServicesOptions): DesktopServices {
   async function withSecretEnv<T>(fn: () => Promise<T>): Promise<T> {
     const key = readSecretKey();
     if (!key) return fn();
-    const prev = process.env.TEMEMORY_LLM_API_KEY;
-    process.env.TEMEMORY_LLM_API_KEY = key;
+    const prev = process.env.FOLIO_LLM_API_KEY;
+    process.env.FOLIO_LLM_API_KEY = key;
     try {
       return await fn();
     } finally {
-      if (prev === undefined) delete process.env.TEMEMORY_LLM_API_KEY;
-      else process.env.TEMEMORY_LLM_API_KEY = prev;
+      if (prev === undefined) delete process.env.FOLIO_LLM_API_KEY;
+      else process.env.FOLIO_LLM_API_KEY = prev;
     }
   }
 
@@ -465,14 +465,14 @@ export function createServices(opts: ServicesOptions): DesktopServices {
           patch.adapters.map((entry) => [entry.id, { enabled: entry.enabled }]),
         );
       }
-      // patchConfig 内部 loadConfig 会把 env 的 TEMEMORY_LLM_API_KEY 合并进配置，
+      // patchConfig 内部 loadConfig 会把 env 的 FOLIO_LLM_API_KEY 合并进配置，
       // 写回前临时摘掉，避免 env 里的 Key 被顺带落盘
-      const prevEnv = process.env.TEMEMORY_LLM_API_KEY;
-      delete process.env.TEMEMORY_LLM_API_KEY;
+      const prevEnv = process.env.FOLIO_LLM_API_KEY;
+      delete process.env.FOLIO_LLM_API_KEY;
       try {
         patchConfig(paths, configPatch);
       } finally {
-        if (prevEnv !== undefined) process.env.TEMEMORY_LLM_API_KEY = prevEnv;
+        if (prevEnv !== undefined) process.env.FOLIO_LLM_API_KEY = prevEnv;
       }
       if (apiKey !== undefined) {
         if (apiKey === '') clearSecretKey();

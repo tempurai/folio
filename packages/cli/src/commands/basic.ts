@@ -6,7 +6,7 @@ import {
   MemoryStore,
   resolvePaths,
   SearchIndex,
-} from '@tememory/core';
+} from '@folio/core';
 import {
   findMemory,
   formatTime,
@@ -36,7 +36,7 @@ interface SearchOpts {
 export function registerInit(program: Command): void {
   program
     .command('init')
-    .description('初始化 tememory 主目录（创建目录结构与默认配置文件）')
+    .description('初始化 folio 主目录（创建目录结构与默认配置文件）')
     .action((_opts: Record<string, never>, cmd: Command) => {
       const g = globalsOf(cmd);
       const paths = resolvePaths(g.home);
@@ -48,7 +48,7 @@ export function registerInit(program: Command): void {
         return;
       }
       console.log(
-        created ? `已创建 tememory 主目录：${paths.home}` : `主目录已存在：${paths.home}`,
+        created ? `已创建 folio 主目录：${paths.home}` : `主目录已存在：${paths.home}`,
       );
       console.log(`  配置文件：${paths.configFile}${created ? '（已生成默认配置）' : ''}`);
       console.log(`  记忆目录：${paths.memoryDir}`);
@@ -149,7 +149,7 @@ export function registerSearch(program: Command): void {
         return;
       }
       if (!fromCache) {
-        console.log('（搜索索引缓存不存在，已临时重建；运行 tememory sync 可刷新缓存）');
+        console.log('（搜索索引缓存不存在，已临时重建；运行 folio sync 可刷新缓存）');
       }
       for (const r of results) {
         console.log(`${r.id.slice(0, 12)}  [${r.score}]  ${r.title}（${r.type} · ${r.scope}）`);

@@ -5,7 +5,7 @@ import { adapters } from './adapters/index.js';
 import type { HarnessAdapter, McpIntegration } from './adapters/types.js';
 
 /** 注册进各 harness 配置文件的 MCP server 名 */
-export const SERVER_NAME = 'tememory';
+export const SERVER_NAME = 'folio';
 
 export interface InstallTarget {
   adapterId: string;
@@ -25,7 +25,7 @@ export interface InstallOptions {
   adapterIds?: string[];
   /** 面向全部支持 MCP 的适配器，包括当前未检测到安装的 */
   all?: boolean;
-  /** 注册用的启动命令，默认 tememory；可含空格，如 "node /abs/path/cli.js" */
+  /** 注册用的启动命令，默认 folio；可含空格，如 "node /abs/path/cli.js" */
   command?: string;
 }
 
@@ -47,7 +47,7 @@ function timestamp(): string {
 
 /** `command` 含空格时拆分：首词为 command，其余追加到 args 末尾再补 serve */
 export function buildServerEntry(commandOpt?: string): { command: string; args: string[] } {
-  const raw = commandOpt !== undefined && commandOpt.trim() !== '' ? commandOpt.trim() : 'tememory';
+  const raw = commandOpt !== undefined && commandOpt.trim() !== '' ? commandOpt.trim() : 'folio';
   const [command, ...rest] = raw.split(/\s+/);
   return { command, args: [...rest, 'serve'] };
 }

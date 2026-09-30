@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-export interface TememoryPaths {
+export interface FolioPaths {
   home: string;
   configFile: string;
   memoryDir: string;
@@ -18,9 +18,9 @@ function expandHome(p: string): string {
   return p;
 }
 
-export function resolvePaths(homeOverride?: string): TememoryPaths {
+export function resolvePaths(homeOverride?: string): FolioPaths {
   const home = expandHome(
-    homeOverride ?? process.env.TEMEMORY_HOME ?? join(homedir(), '.tememory'),
+    homeOverride ?? process.env.FOLIO_HOME ?? join(homedir(), '.folio'),
   );
   const memoryDir = join(home, 'memory');
   const stateDir = join(home, 'state');

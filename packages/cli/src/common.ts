@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
-import { MEMORY_TYPES, MemoryStore, resolvePaths } from '@tememory/core';
-import type { Memory, MemoryType, TememoryPaths } from '@tememory/core';
+import { MEMORY_TYPES, MemoryStore, resolvePaths } from '@folio/core';
+import type { Memory, MemoryType, FolioPaths } from '@folio/core';
 
 export interface Globals {
   home?: string;
@@ -26,7 +26,7 @@ export function printJson(data: unknown): void {
 }
 
 export interface StoreContext {
-  paths: TememoryPaths;
+  paths: FolioPaths;
   store: MemoryStore;
 }
 

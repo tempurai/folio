@@ -8,7 +8,7 @@ import type { LlmClient } from './llm.js';
 import { contentHash, memoryTypeSchema, normalizeContent } from './model.js';
 import type { SyncState } from './model.js';
 import { resolvePaths } from './paths.js';
-import type { TememoryPaths } from './paths.js';
+import type { FolioPaths } from './paths.js';
 import { SearchIndex } from './search.js';
 import { MemoryStore } from './store.js';
 
@@ -87,7 +87,7 @@ function emptyState(): SyncState {
   return { version: 1, sources: {} };
 }
 
-function loadSyncState(paths: TememoryPaths): { state: SyncState; error: string | null } {
+function loadSyncState(paths: FolioPaths): { state: SyncState; error: string | null } {
   if (!existsSync(paths.stateFile)) return { state: emptyState(), error: null };
   try {
     const parsed = syncStateSchema.parse(JSON.parse(readFileSync(paths.stateFile, 'utf8')));
@@ -100,7 +100,7 @@ function loadSyncState(paths: TememoryPaths): { state: SyncState; error: string 
   }
 }
 
-function saveSyncState(paths: TememoryPaths, state: SyncState): void {
+function saveSyncState(paths: FolioPaths, state: SyncState): void {
   mkdirSync(paths.stateDir, { recursive: true });
   const tmp = `${paths.stateFile}.tmp`;
   writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
@@ -127,11 +127,11 @@ const activityEntrySchema = z.object({
   adapters: z.array(activityReportSchema),
 });
 
-function activityFile(paths: TememoryPaths): string {
+function activityFile(paths: FolioPaths): string {
   return join(paths.stateDir, 'activity.jsonl');
 }
 
-function appendActivity(paths: TememoryPaths, entry: ActivityEntry): void {
+function appendActivity(paths: FolioPaths, entry: ActivityEntry): void {
   mkdirSync(paths.stateDir, { recursive: true });
   const file = activityFile(paths);
   appendFileSync(file, `${JSON.stringify(entry)}\n`, 'utf8');
@@ -145,7 +145,7 @@ function appendActivity(paths: TememoryPaths, entry: ActivityEntry): void {
 }
 
 /** 读取活动日志，最新在前；文件不存在返回 []，损坏行跳过 */
-export function readActivity(paths: TememoryPaths, opts?: { limit?: number }): ActivityEntry[] {
+export function readActivity(paths: FolioPaths, opts?: { limit?: number }): ActivityEntry[] {
   const file = activityFile(paths);
   if (!existsSync(file)) return [];
   const limit = opts?.limit ?? ACTIVITY_DEFAULT_LIMIT;

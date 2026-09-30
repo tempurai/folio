@@ -25,8 +25,8 @@ const ENV_KEYS = [
   'CLAUDE_CONFIG_DIR',
   'CODEX_HOME',
   'KIMI_CODE_HOME',
-  'TEMEMORY_CURSOR_HOME',
-  'TEMEMORY_ZCODE_HOME',
+  'FOLIO_CURSOR_HOME',
+  'FOLIO_ZCODE_HOME',
 ] as const;
 
 const savedEnv: Partial<Record<(typeof ENV_KEYS)[number], string | undefined>> = {};
@@ -49,8 +49,8 @@ beforeEach(() => {
   process.env.CLAUDE_CONFIG_DIR = adapterHome('claude-code');
   process.env.CODEX_HOME = adapterHome('codex');
   process.env.KIMI_CODE_HOME = adapterHome('kimi-code');
-  process.env.TEMEMORY_CURSOR_HOME = adapterHome('cursor');
-  process.env.TEMEMORY_ZCODE_HOME = adapterHome('zcode');
+  process.env.FOLIO_CURSOR_HOME = adapterHome('cursor');
+  process.env.FOLIO_ZCODE_HOME = adapterHome('zcode');
 });
 
 afterEach(() => {
@@ -308,17 +308,17 @@ describe('MCP 集成', () => {
     const parsed = { theme: 'dark', mcpServers: { fs: { command: 'npx' } } };
     expect(mcp.getServers(parsed)).toEqual({ fs: { command: 'npx' } });
 
-    const added = rec(mcp.withServer(parsed, 'tememory', { command: 'tememory' }));
+    const added = rec(mcp.withServer(parsed, 'folio', { command: 'folio' }));
     expect(added.mcpServers).toEqual({
       fs: { command: 'npx' },
-      tememory: { command: 'tememory' },
+      folio: { command: 'folio' },
     });
     expect(added.theme).toBe('dark');
     // 不修改原对象
     expect(parsed.mcpServers).toEqual({ fs: { command: 'npx' } });
 
     const removed = rec(mcp.withoutServer(added, 'fs'));
-    expect(removed.mcpServers).toEqual({ tememory: { command: 'tememory' } });
+    expect(removed.mcpServers).toEqual({ folio: { command: 'folio' } });
     expect(removed.theme).toBe('dark');
 
     // 非法输入容错
@@ -336,17 +336,17 @@ describe('MCP 集成', () => {
     const parsed = parseToml(readFileSync(configPath, 'utf8'));
     expect(mcp.getServers(parsed)).toEqual({ fs: { command: 'npx', args: ['-y', 'server-fs'] } });
 
-    const added = rec(mcp.withServer(parsed, 'tememory', { command: 'tememory', args: ['mcp'] }));
+    const added = rec(mcp.withServer(parsed, 'folio', { command: 'folio', args: ['mcp'] }));
     expect(added.mcp_servers).toEqual({
       fs: { command: 'npx', args: ['-y', 'server-fs'] },
-      tememory: { command: 'tememory', args: ['mcp'] },
+      folio: { command: 'folio', args: ['mcp'] },
     });
     // 其他顶层键保留
     expect(added.model).toBe('gpt-5-codex');
     expect(added.approval_policy).toBe('on-request');
 
     const removed = rec(mcp.withoutServer(added, 'fs'));
-    expect(removed.mcp_servers).toEqual({ tememory: { command: 'tememory', args: ['mcp'] } });
+    expect(removed.mcp_servers).toEqual({ folio: { command: 'folio', args: ['mcp'] } });
     expect(removed.model).toBe('gpt-5-codex');
   });
 
@@ -357,15 +357,15 @@ describe('MCP 集成', () => {
     expect(configPath).toBe(join(adapterHome('cursor'), 'mcp.json'));
 
     const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as unknown;
-    const added = rec(mcp.withServer(parsed, 'tememory', { command: 'tememory' }));
+    const added = rec(mcp.withServer(parsed, 'folio', { command: 'folio' }));
     expect(added.mcpServers).toEqual({
       docs: { url: 'https://mcp.example.com/sse' },
-      tememory: { command: 'tememory' },
+      folio: { command: 'folio' },
     });
     expect(added.editor).toEqual({ enabled: true });
 
     const removed = rec(mcp.withoutServer(added, 'docs'));
-    expect(removed.mcpServers).toEqual({ tememory: { command: 'tememory' } });
+    expect(removed.mcpServers).toEqual({ folio: { command: 'folio' } });
     expect(removed.editor).toEqual({ enabled: true });
   });
 
@@ -376,15 +376,15 @@ describe('MCP 集成', () => {
     expect(configPath).toBe(join(adapterHome('kimi-code'), 'mcp.json'));
 
     const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as unknown;
-    const added = rec(mcp.withServer(parsed, 'tememory', { command: 'tememory' }));
+    const added = rec(mcp.withServer(parsed, 'folio', { command: 'folio' }));
     expect(added.mcpServers).toEqual({
       web: { command: 'uvx', args: ['web-mcp'] },
-      tememory: { command: 'tememory' },
+      folio: { command: 'folio' },
     });
     expect(added.locale).toBe('zh-CN');
 
     const removed = rec(mcp.withoutServer(added, 'web'));
-    expect(removed.mcpServers).toEqual({ tememory: { command: 'tememory' } });
+    expect(removed.mcpServers).toEqual({ folio: { command: 'folio' } });
     expect(removed.locale).toBe('zh-CN');
   });
 
@@ -397,17 +397,17 @@ describe('MCP 集成', () => {
     const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as unknown;
     expect(mcp.getServers(parsed)).toEqual({ fs: { command: 'npx', args: ['-y', 'server-fs'] } });
 
-    const added = rec(mcp.withServer(parsed, 'tememory', { command: 'tememory' }));
+    const added = rec(mcp.withServer(parsed, 'folio', { command: 'folio' }));
     expect(added.mcp.servers).toEqual({
       fs: { command: 'npx', args: ['-y', 'server-fs'] },
-      tememory: { command: 'tememory' },
+      folio: { command: 'folio' },
     });
     // 嵌套路径上的其他键与顶层其他键都保留
     expect(added.mcp.timeoutMs).toBe(5000);
     expect(added.theme).toBe('dark');
 
     const removed = rec(mcp.withoutServer(added, 'fs'));
-    expect(removed.mcp.servers).toEqual({ tememory: { command: 'tememory' } });
+    expect(removed.mcp.servers).toEqual({ folio: { command: 'folio' } });
     expect(removed.mcp.timeoutMs).toBe(5000);
     expect(removed.theme).toBe('dark');
 

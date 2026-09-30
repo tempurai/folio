@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Command } from 'commander';
-import { adapters, createLlmClient, loadConfig, MEMORY_TYPES, readMcpConfig, SERVER_NAME } from '@tememory/core';
-import type { TememoryConfig } from '@tememory/core';
+import { adapters, createLlmClient, loadConfig, MEMORY_TYPES, readMcpConfig, SERVER_NAME } from '@folio/core';
+import type { FolioConfig } from '@folio/core';
 import { errMsg, globalsOf, openStore, printJson } from '../common.js';
 
 type Status = 'ok' | 'warn' | 'error';
@@ -30,10 +30,10 @@ export function registerDoctor(program: Command): void {
         items.push({
           name: '主目录',
           status: 'warn',
-          detail: `${paths.home} 不存在，运行 tememory init 创建`,
+          detail: `${paths.home} 不存在，运行 folio init 创建`,
         });
       } else {
-        const probe = join(paths.home, '.tememory-write-probe');
+        const probe = join(paths.home, '.folio-write-probe');
         try {
           writeFileSync(probe, '', 'utf8');
           rmSync(probe);
@@ -48,12 +48,12 @@ export function registerDoctor(program: Command): void {
       }
 
       // ② 配置文件合法性
-      let config: TememoryConfig | null = null;
+      let config: FolioConfig | null = null;
       if (!existsSync(paths.configFile)) {
         items.push({
           name: '配置文件',
           status: 'warn',
-          detail: `${paths.configFile} 不存在，运行 tememory init 生成默认配置`,
+          detail: `${paths.configFile} 不存在，运行 folio init 生成默认配置`,
         });
       } else {
         try {
@@ -105,7 +105,7 @@ export function registerDoctor(program: Command): void {
               }
               detail += parseFailed
                 ? `；MCP 配置 ${file} 存在但解析失败`
-                : `；MCP 配置 ${file} ${registered ? '已注册 tememory' : '存在，未注册 tememory'}`;
+                : `；MCP 配置 ${file} ${registered ? '已注册 folio' : '存在，未注册 folio'}`;
             }
           }
           items.push({ name: `适配器 ${adapter.id}`, status: 'ok', detail });
@@ -135,7 +135,7 @@ export function registerDoctor(program: Command): void {
         items.push({
           name: '搜索索引',
           status: 'warn',
-          detail: '尚未建立（运行 tememory sync 生成）',
+          detail: '尚未建立（运行 folio sync 生成）',
         });
       } else {
         try {

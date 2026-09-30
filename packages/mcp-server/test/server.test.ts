@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { Memory, MemoryMeta } from '@tememory/core';
+import type { Memory, MemoryMeta } from '@folio/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createMcpServer } from '../src/index.js';
 
@@ -17,10 +17,10 @@ interface TestContext {
 }
 
 async function setup(): Promise<TestContext> {
-  const home = mkdtempSync(join(tmpdir(), 'tememory-mcp-test-'));
+  const home = mkdtempSync(join(tmpdir(), 'folio-mcp-test-'));
   const server = await createMcpServer({ home });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  const client = new Client({ name: 'tememory-test-client', version: '0.0.1' });
+  const client = new Client({ name: 'folio-test-client', version: '0.0.1' });
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
   return { client, server, home };
 }
@@ -34,7 +34,7 @@ function resultData(result: CallToolResultLike): unknown {
   return JSON.parse(item.text);
 }
 
-describe('tememory mcp-server', () => {
+describe('folio mcp-server', () => {
   let ctx: TestContext;
 
   beforeEach(async () => {
@@ -202,7 +202,7 @@ describe('tememory mcp-server', () => {
     const item = resource.contents[0];
     expect(item.mimeType).toBe('text/markdown');
     if (!('text' in item)) throw new Error('expected text resource content');
-    expect(item.text).toContain('# tememory 记忆索引');
+    expect(item.text).toContain('# folio 记忆索引');
     expect(item.text).toContain('索引可见性条目');
   });
 });

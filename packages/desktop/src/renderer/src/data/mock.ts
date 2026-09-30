@@ -32,11 +32,11 @@ export const FILES: MemoryFile[] = [
     body: '终端用 Warp，编辑器用 Cursor。暗色主题，等宽字体 JetBrains Mono。' },
   { folder: 'user',      file: 'profile-lt43c8a2.md', title: '用户画像', scope: 'global', src: 'zcode', from: '~/.zcode/cli/memories/projects/demo/memory/user_profile.md', updated: '09-27 08:26', tags: ['画像'],
     body: '全栈工程师，主要写 TypeScript 和 Go。关注 AI 基础设施与开发者工具。' },
-  { folder: 'feedback',  file: 'build-before-test-lt3bc422.md', title: '跑测试前必须先构建', scope: 'project:tememory', src: 'claude-code', from: '~/.claude/projects/-tmp-workspace/memory/feedback_testing.md', updated: '09-28 10:02', tags: ['测试', '构建'],
+  { folder: 'feedback',  file: 'build-before-test-lt3bc422.md', title: '跑测试前必须先构建', scope: 'project:folio', src: 'claude-code', from: '~/.claude/projects/-tmp-workspace/memory/feedback_testing.md', updated: '09-28 10:02', tags: ['测试', '构建'],
     body: 'cli 的 e2e 测试跑的是 dist 产物。改完代码必须先 `pnpm -r build` 再 `pnpm -r test`，否则测的是旧代码。' },
   { folder: 'feedback',  file: 'no-destructive-cmds-lt44d9f6.md', title: '不要替我执行破坏性命令', scope: 'global', src: 'claude-code', from: '~/.claude/projects/-tmp-workspace/memory/feedback_safety.md', updated: '09-24 17:12', tags: ['安全', '边界'],
     body: '`rm -rf`、`git push --force`、数据库 drop 这类操作，必须先列出影响范围并等我确认。' },
-  { folder: 'project',   file: 'node18-constraint-lt3f2c81.md', title: 'tememory 的 Node 版本约束', scope: 'project:tememory', src: 'kimi-code', from: '~/.kimi-code/memories/tememory/note.md', updated: '09-29 11:20', tags: ['兼容性', 'Node'],
+  { folder: 'project',   file: 'node18-constraint-lt3f2c81.md', title: 'folio 的 Node 版本约束', scope: 'project:folio', src: 'kimi-code', from: '~/.kimi-code/memories/folio/note.md', updated: '09-29 11:20', tags: ['兼容性', 'Node'],
     body: '宿主机是 Node 18，所有依赖必须兼容 Node 18：加依赖前先查 engines。chokidar 锁 4.x、commander 锁 13.x。' },
   { folder: 'project',   file: 'legacy-npm-lock-lt45e1b8.md', title: 'legacy-app 锁定 npm', scope: 'project:legacy-app', src: 'cursor', from: 'legacy-app/.cursor/rules/deps.mdc', updated: '09-14 15:38', tags: ['包管理'],
     body: 'legacy-app 仓库锁定 npm（package-lock.json 已提交），不要切换到 pnpm。' },
@@ -61,11 +61,11 @@ export const INDEX_MD = `# MEMORY.md
 - [用户画像](user/profile-lt43c8a2.md) · global
 
 ## 偏好反馈（2）
-- [跑测试前必须先构建](feedback/build-before-test-lt3bc422.md) · project:tememory
+- [跑测试前必须先构建](feedback/build-before-test-lt3bc422.md) · project:folio
 - [不要替我执行破坏性命令](feedback/no-destructive-cmds-lt44d9f6.md) · global
 
 ## 项目（3）
-- [tememory 的 Node 版本约束](project/node18-constraint-lt3f2c81.md) · project:tememory
+- [folio 的 Node 版本约束](project/node18-constraint-lt3f2c81.md) · project:folio
 - [legacy-app 锁定 npm](project/legacy-npm-lock-lt45e1b8.md) · project:legacy-app
 - [React 组件规范](project/react-rules-lt42b6e4.md) · project:web-app
 
@@ -86,7 +86,7 @@ export const OPS: OrganizeOp[] = [
   { st: 'M', files: 'memory/user/profile-lt43c8a2.md', to: null,
     why: '把 zcode 的 user_profile 与 codex 的 preference 合并进同一份用户画像文件，内容互补。' },
   { st: 'R', files: 'memory/reference/mcp-notes-lt46f3c0.md', to: 'memory/project/mcp-notes-lt46f3c0.md',
-    why: '内容只与 tememory 项目相关 —— 重分类就是把文件从 reference/ 移到 project/。' },
+    why: '内容只与 folio 项目相关 —— 重分类就是把文件从 reference/ 移到 project/。' },
   { st: 'M', files: 'memory/feedback/build-before-test-lt3bc422.md', to: null,
     why: '仅更新 frontmatter：tags 增加 monorepo，与 Node 版本约束归入同一主题簇。' },
   { st: '!', files: 'memory/user/pnpm-preference-lt3a9x01.md  ↔  memory/project/legacy-npm-lock-lt45e1b8.md', to: null,

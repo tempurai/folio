@@ -6,7 +6,7 @@ import type {
   MemoryType,
   OrganizePlan,
   SyncReport,
-} from '@tememory/core';
+} from '@folio/core';
 
 /**
  * 桌面端 IPC 契约：main / preload / renderer 三方共享。
@@ -21,7 +21,7 @@ export type {
   MemoryType,
   OrganizePlan,
   SyncReport,
-} from '@tememory/core';
+} from '@folio/core';
 
 export const IPC = {
   treeList: 'tree:list',
@@ -133,7 +133,7 @@ export interface WatchStatus {
 }
 
 /** preload 通过 contextBridge 暴露给 renderer 的窄 API（纯数据进出） */
-export interface TememoryApi {
+export interface FolioApi {
   listTree(): Promise<TreeResponse>;
   readFile(relPath: string): Promise<FileReadResponse>;
   readIndex(): Promise<string>;

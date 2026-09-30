@@ -22,10 +22,10 @@ export type {
 } from './model.js';
 
 export { resolvePaths } from './paths.js';
-export type { TememoryPaths } from './paths.js';
+export type { FolioPaths } from './paths.js';
 
 export { ensureHome, loadConfig, patchConfig, saveConfig } from './config.js';
-export type { ConfigPatch, TememoryConfig } from './config.js';
+export type { ConfigPatch, FolioConfig } from './config.js';
 
 export { MemoryStore } from './store.js';
 export type { CreateInput, ListFilter, UpdatePatch } from './store.js';

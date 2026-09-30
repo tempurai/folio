@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# tememory 端到端验证镜像：
+# folio 端到端验证镜像：
 #   1. 全局安装真实 harness CLI（仅验证可安装性与 --version，不登录、不运行交互功能）
 #   2. 在干净的 Linux 容器内完成 pnpm install / build / 全量单测
 #   3. ENTRYPOINT 执行 docker/e2e.sh，跑通 init→sync→检索→install→MCP 全链路断言

@@ -70,9 +70,9 @@ export function Sidebar({
       {/* 头部：logo + 名称 + home 路径 */}
       <div className="flex items-center gap-[9px] px-4 pb-3 pt-[14px]">
         <div className="h-[19px] w-[19px] flex-none rounded-[6px] bg-gradient-to-br from-[#4493f8] to-[#0550ae]" />
-        <div className="text-[13px] font-semibold tracking-[-0.01em]">tememory</div>
+        <div className="text-[13px] font-semibold tracking-[-0.01em]">folio</div>
         <div className="ml-auto font-mono text-[10.5px] text-muted-foreground">
-          ~/.tememory
+          ~/.folio
         </div>
       </div>
 

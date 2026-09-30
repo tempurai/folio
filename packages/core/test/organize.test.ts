@@ -7,7 +7,7 @@ import type { MemorySource } from '../src/model.js';
 import { applyOrganize, planOrganize } from '../src/organize.js';
 import type { OrganizePlan } from '../src/organize.js';
 import { resolvePaths } from '../src/paths.js';
-import type { TememoryPaths } from '../src/paths.js';
+import type { FolioPaths } from '../src/paths.js';
 import { MemoryStore } from '../src/store.js';
 
 function source(path: string): MemorySource {
@@ -34,11 +34,11 @@ function planOf(...ops: OrganizePlan['ops']): OrganizePlan {
 }
 
 describe('planOrganize', () => {
-  let paths: TememoryPaths;
+  let paths: FolioPaths;
   let store: MemoryStore;
 
   beforeEach(() => {
-    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'tememory-organize-')));
+    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'folio-organize-')));
     store = new MemoryStore(paths);
     store.init();
   });
@@ -103,11 +103,11 @@ describe('planOrganize', () => {
 });
 
 describe('applyOrganize', () => {
-  let paths: TememoryPaths;
+  let paths: FolioPaths;
   let store: MemoryStore;
 
   beforeEach(() => {
-    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'tememory-apply-')));
+    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'folio-apply-')));
     store = new MemoryStore(paths);
     store.init();
   });

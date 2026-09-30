@@ -18,7 +18,7 @@ import {
   slugify,
 } from './model.js';
 import type { Memory, MemoryMeta, MemorySource, MemoryType } from './model.js';
-import type { TememoryPaths } from './paths.js';
+import type { FolioPaths } from './paths.js';
 
 export interface ListFilter {
   type?: MemoryType;
@@ -75,7 +75,7 @@ function toMeta(memory: Memory): MemoryMeta {
 }
 
 export class MemoryStore {
-  constructor(private readonly paths: TememoryPaths) {}
+  constructor(private readonly paths: FolioPaths) {}
 
   init(): void {
     mkdirSync(this.paths.memoryDir, { recursive: true });
@@ -197,9 +197,9 @@ export class MemoryStore {
       .sort((a, b) => b.memory.updated.localeCompare(a.memory.updated));
 
     const lines: string[] = [
-      '# tememory 记忆索引',
+      '# folio 记忆索引',
       '',
-      '> 本文件由 tememory 自动生成，请勿手动修改；要修改内容请编辑对应的记忆文件。',
+      '> 本文件由 folio 自动生成，请勿手动修改；要修改内容请编辑对应的记忆文件。',
       '',
     ];
     for (const type of MEMORY_TYPES) {

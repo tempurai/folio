@@ -10,7 +10,7 @@ import type {
   SettingsPatch,
   SourceStatus,
   SyncReport,
-  TememoryApi,
+  FolioApi,
   TreeResponse,
   WatchStatus,
 } from '../../../shared/ipc';
@@ -18,7 +18,7 @@ import { ACT, FILES, FOLDERS, INDEX_MD, OPS, SOURCES } from '@/data/mock';
 import type { MemoryFile, MemoryFolder } from '@/lib/types';
 
 /**
- * 数据入口：Electron 里用 preload 注入的 window.tememory；
+ * 数据入口：Electron 里用 preload 注入的 window.folio；
  * 纯浏览器预览（无 preload）时回退到 mockProvider，页面代码无感知。
  */
 
@@ -45,7 +45,7 @@ export function relPathOf(folder: MemoryFolder, file: string): string {
 
 const SOURCE_IDS = ['claude-code', 'codex', 'cursor', 'kimi-code', 'zcode'] as const;
 
-function createMockProvider(): TememoryApi {
+function createMockProvider(): FolioApi {
   const files: MemoryFile[] = FILES.map((f) => ({ ...f }));
   const mcpOn = new Map<string, boolean>(SOURCES.map((s, i) => [SOURCE_IDS[i], s.mcp]));
   let ops = OPS.map((o, i) => ({ ...o, index: i }));
@@ -59,7 +59,7 @@ function createMockProvider(): TememoryApi {
       classifyOnSync: false,
     },
     adapters: SOURCES.map((s, i) => ({ id: SOURCE_IDS[i], name: s.name, enabled: true })),
-    home: '~/.tememory',
+    home: '~/.folio',
   };
   let watchEnabled = true;
 
@@ -240,7 +240,7 @@ function createMockProvider(): TememoryApi {
   };
 }
 
-export const api: TememoryApi = window.tememory ?? createMockProvider();
+export const api: FolioApi = window.folio ?? createMockProvider();
 
 /** 纯浏览器预览模式（无 Electron preload）时为 true */
-export const isMock = window.tememory === undefined;
+export const isMock = window.folio === undefined;

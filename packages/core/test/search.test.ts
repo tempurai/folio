@@ -22,7 +22,7 @@ const memories: Memory[] = [
   {
     id: 'm_mcp_body',
     type: 'project',
-    scope: 'project:tememory',
+    scope: 'project:folio',
     title: '客户端排障记录',
     tags: [],
     source: { harness: 'codex', importedAt: '2026-09-29T08:00:00.000Z' },
@@ -72,12 +72,12 @@ describe('SearchIndex', () => {
   it('支持 type / scope / limit 过滤', () => {
     const index = builtIndex();
     expect(index.search('mcp', { type: 'reference' }).map((h) => h.id)).toEqual(['m_mcp_title']);
-    expect(index.search('mcp', { scope: 'project:tememory' }).map((h) => h.id)).toEqual(['m_mcp_body']);
+    expect(index.search('mcp', { scope: 'project:folio' }).map((h) => h.id)).toEqual(['m_mcp_body']);
     expect(index.search('mcp', { limit: 1 })).toHaveLength(1);
   });
 
   it('save / load 往返后检索结果一致；文件缺失返回 null', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'tememory-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'folio-search-'));
     const file = join(dir, 'cache', 'search-index.json');
 
     const index = builtIndex();

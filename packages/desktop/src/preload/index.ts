@@ -13,7 +13,7 @@ import type {
   SettingsPatch,
   SourceStatus,
   SyncReport,
-  TememoryApi,
+  FolioApi,
   TreeResponse,
   WatchStatus,
 } from '../shared/ipc.js';
@@ -26,7 +26,7 @@ import type {
 const invoke = <T>(channel: string, payload?: unknown): Promise<T> =>
   ipcRenderer.invoke(channel, payload) as Promise<T>;
 
-const api: TememoryApi = {
+const api: FolioApi = {
   listTree: () => invoke<TreeResponse>(IPC.treeList),
   readFile: (relPath: string) => invoke<FileReadResponse>(IPC.fileRead, { relPath }),
   readIndex: () => invoke<string>(IPC.fileReadIndex),
@@ -67,4 +67,4 @@ const api: TememoryApi = {
   },
 };
 
-contextBridge.exposeInMainWorld('tememory', api);
+contextBridge.exposeInMainWorld('folio', api);

@@ -42,7 +42,7 @@ export function SettingsPage() {
     <PageContainer>
       <PageHeader
         title="设置"
-        sub="保存于 ~/.tememory/config.toml · 环境变量 TEMEMORY_LLM_API_KEY 可代替填写 Key"
+        sub="保存于 ~/.folio/config.toml · 环境变量 FOLIO_LLM_API_KEY 可代替填写 Key"
       />
 
       <SettingGroup
@@ -100,7 +100,7 @@ export function SettingsPage() {
         hint="全部数据存于本地，无遥测。删除该目录即完全卸载数据。"
       >
         <SettingLine label="记忆库目录">
-          <Input defaultValue="~/.tememory" className="h-8 max-w-[340px] text-[12.5px]" />
+          <Input defaultValue="~/.folio" className="h-8 max-w-[340px] text-[12.5px]" />
         </SettingLine>
       </SettingGroup>
     </PageContainer>

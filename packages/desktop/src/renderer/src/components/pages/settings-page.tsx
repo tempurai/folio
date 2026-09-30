@@ -99,7 +99,7 @@ export function SettingsPage() {
     <PageContainer>
       <PageHeader
         title="设置"
-        sub="保存于 ~/.tememory/config.toml · 环境变量 TEMEMORY_LLM_API_KEY 可代替填写 Key"
+        sub="保存于 ~/.folio/config.toml · 环境变量 FOLIO_LLM_API_KEY 可代替填写 Key"
       />
       {savedAt !== null && (
         <p className="mb-4 mt-[-16px] text-[12px] text-success">已保存 ✓</p>

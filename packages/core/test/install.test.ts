@@ -19,8 +19,8 @@ const ENV_KEYS = [
   'CLAUDE_CONFIG_DIR',
   'CODEX_HOME',
   'KIMI_CODE_HOME',
-  'TEMEMORY_CURSOR_HOME',
-  'TEMEMORY_ZCODE_HOME',
+  'FOLIO_CURSOR_HOME',
+  'FOLIO_ZCODE_HOME',
   'HOME',
 ] as const;
 
@@ -41,15 +41,15 @@ function backupsOf(dir: string, prefix: string): string[] {
 
 beforeEach(() => {
   for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
-  fixtures = mkdtempSync(join(tmpdir(), 'tememory-install-fixtures-'));
+  fixtures = mkdtempSync(join(tmpdir(), 'folio-install-fixtures-'));
   cpSync(FIXTURE_SRC, fixtures, { recursive: true });
-  fakeHome = mkdtempSync(join(tmpdir(), 'tememory-install-home-'));
+  fakeHome = mkdtempSync(join(tmpdir(), 'folio-install-home-'));
   tempDirs = [fixtures, fakeHome];
   process.env.CLAUDE_CONFIG_DIR = join(fixtures, 'claude-code');
   process.env.CODEX_HOME = join(fixtures, 'codex');
   process.env.KIMI_CODE_HOME = join(fixtures, 'kimi-code');
-  process.env.TEMEMORY_CURSOR_HOME = join(fixtures, 'cursor');
-  process.env.TEMEMORY_ZCODE_HOME = join(fixtures, 'zcode');
+  process.env.FOLIO_CURSOR_HOME = join(fixtures, 'cursor');
+  process.env.FOLIO_ZCODE_HOME = join(fixtures, 'zcode');
   process.env.HOME = fakeHome;
 });
 
@@ -63,10 +63,10 @@ afterEach(() => {
 });
 
 describe('buildServerEntry', () => {
-  it('缺省与空白输入都回退到 tememory serve', () => {
-    expect(buildServerEntry()).toEqual({ command: 'tememory', args: ['serve'] });
-    expect(buildServerEntry('')).toEqual({ command: 'tememory', args: ['serve'] });
-    expect(buildServerEntry('   ')).toEqual({ command: 'tememory', args: ['serve'] });
+  it('缺省与空白输入都回退到 folio serve', () => {
+    expect(buildServerEntry()).toEqual({ command: 'folio', args: ['serve'] });
+    expect(buildServerEntry('')).toEqual({ command: 'folio', args: ['serve'] });
+    expect(buildServerEntry('   ')).toEqual({ command: 'folio', args: ['serve'] });
   });
 
   it('含空格时首词为 command，其余进 args 再补 serve；多余空白被压缩', () => {
@@ -96,16 +96,16 @@ describe('installMcpServer', () => {
     expect(target.backupPath).toMatch(/mcp\.json\.bak-\d{14}$/);
 
     const parsed = rec(JSON.parse(readFileSync(target.configPath, 'utf8')));
-    expect(parsed.mcpServers.tememory).toEqual({
+    expect(parsed.mcpServers.folio).toEqual({
       command: 'node',
       args: ['/abs/path/cli.js', 'serve'],
     });
     expect(parsed.mcpServers.web).toEqual({ command: 'uvx', args: ['web-mcp'] });
     expect(parsed.locale).toBe('zh-CN');
 
-    // 备份内容是写入前的原始配置（不含 tememory）
+    // 备份内容是写入前的原始配置（不含 folio）
     const backup = rec(JSON.parse(readFileSync(target.backupPath as string, 'utf8')));
-    expect(backup.mcpServers.tememory).toBeUndefined();
+    expect(backup.mcpServers.folio).toBeUndefined();
     expect(backup.mcpServers.web).toEqual({ command: 'uvx', args: ['web-mcp'] });
   });
 
@@ -125,26 +125,26 @@ describe('installMcpServer', () => {
 
     // claude-code 的配置在 HOME 根的 .claude.json：原本不存在 → 新建，无备份
     const claude = rec(JSON.parse(readFileSync(join(fakeHome, '.claude.json'), 'utf8')));
-    expect(claude.mcpServers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(claude.mcpServers.folio).toEqual({ command: 'folio', args: ['serve'] });
     const claudeTarget = results.find((t) => t.adapterId === 'claude-code');
     expect(claudeTarget?.backupPath).toBeUndefined();
     expect(backupsOf(fakeHome, '.claude.json')).toHaveLength(0);
 
     const cursor = rec(JSON.parse(readFileSync(join(fixtures, 'cursor', 'mcp.json'), 'utf8')));
-    expect(cursor.mcpServers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(cursor.mcpServers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(cursor.mcpServers.docs).toEqual({ url: 'https://mcp.example.com/sse' });
     expect(cursor.editor).toEqual({ enabled: true });
 
     const zcode = rec(
       JSON.parse(readFileSync(join(fixtures, 'zcode', 'cli', 'config.json'), 'utf8')),
     );
-    expect(zcode.mcp.servers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(zcode.mcp.servers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(zcode.mcp.servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(zcode.mcp.timeoutMs).toBe(5000);
     expect(zcode.theme).toBe('dark');
 
     const codex = rec(parseToml(readFileSync(join(fixtures, 'codex', 'config.toml'), 'utf8')));
-    expect(codex.mcp_servers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(codex.mcp_servers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(codex.mcp_servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(codex.model).toBe('gpt-5-codex');
 
@@ -160,7 +160,7 @@ describe('installMcpServer', () => {
     const results = await installMcpServer({ adapterIds: ['kimi-code'] });
     expect(results[0].alreadyExisted).toBe(true);
     const parsed = rec(JSON.parse(readFileSync(results[0].configPath, 'utf8')));
-    expect(parsed.mcpServers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(parsed.mcpServers.folio).toEqual({ command: 'folio', args: ['serve'] });
   });
 
   it('未知适配器抛错；全部未检测到且未加 all 时抛「没有可安装的适配器」', async () => {
@@ -187,17 +187,17 @@ describe('uninstallMcpServer', () => {
     }
 
     const kimi = rec(JSON.parse(readFileSync(join(fixtures, 'kimi-code', 'mcp.json'), 'utf8')));
-    expect(kimi.mcpServers.tememory).toBeUndefined();
+    expect(kimi.mcpServers.folio).toBeUndefined();
     expect(kimi.mcpServers.web).toEqual({ command: 'uvx', args: ['web-mcp'] });
     expect(kimi.locale).toBe('zh-CN');
 
     const codex = rec(parseToml(readFileSync(join(fixtures, 'codex', 'config.toml'), 'utf8')));
-    expect(codex.mcp_servers.tememory).toBeUndefined();
+    expect(codex.mcp_servers.folio).toBeUndefined();
     expect(codex.mcp_servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(codex.model).toBe('gpt-5-codex');
 
     const claude = rec(JSON.parse(readFileSync(join(fakeHome, '.claude.json'), 'utf8')));
-    expect(claude.mcpServers.tememory).toBeUndefined();
+    expect(claude.mcpServers.folio).toBeUndefined();
 
     // 再次卸载：均未注册
     const again = await uninstallMcpServer({ all: true });

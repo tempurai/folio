@@ -1,5 +1,5 @@
 {
-  "name": "tememory-monorepo",
+  "name": "folio-monorepo",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,10 +17,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lincan/tememory.git"
+    "url": "https://github.com/lincan/folio.git"
   },
-  "homepage": "https://github.com/lincan/tememory#readme",
-  "bugs": "https://github.com/lincan/tememory/issues",
+  "homepage": "https://github.com/lincan/folio#readme",
+  "bugs": "https://github.com/lincan/folio/issues",
   "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=18"

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to tememory. Please read `AGENTS.md` first — it documents the repository layout, hard constraints (Node 18 compatibility, ESM, frozen core API, read-only adapters, desktop security baseline), and testing conventions that all contributions must follow.
+Thanks for your interest in contributing to folio. Please read `AGENTS.md` first — it documents the repository layout, hard constraints (Node 18 compatibility, ESM, frozen core API, read-only adapters, desktop security baseline), and testing conventions that all contributions must follow.
 
 ## Requirements
 
@@ -18,8 +18,8 @@ pnpm test        # vitest run across all 4 packages
 End-to-end verification (required after touching adapters, `install`, or `serve`):
 
 ```bash
-docker build -f docker/Dockerfile -t tememory-e2e .
-docker run --rm tememory-e2e
+docker build -f docker/Dockerfile -t folio-e2e .
+docker run --rm folio-e2e
 ```
 
 ## Contributing an adapter

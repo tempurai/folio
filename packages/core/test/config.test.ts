@@ -4,22 +4,22 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ensureHome, loadConfig, patchConfig, saveConfig } from '../src/config.js';
 import { resolvePaths } from '../src/paths.js';
-import type { TememoryPaths } from '../src/paths.js';
+import type { FolioPaths } from '../src/paths.js';
 
 const ENV_KEYS = [
-  'TEMEMORY_LLM_API_KEY',
-  'TEMEMORY_LLM_BASE_URL',
-  'TEMEMORY_LLM_MODEL',
+  'FOLIO_LLM_API_KEY',
+  'FOLIO_LLM_BASE_URL',
+  'FOLIO_LLM_MODEL',
 ] as const;
 
 const savedEnv: Record<(typeof ENV_KEYS)[number], string | undefined> = {
-  TEMEMORY_LLM_API_KEY: undefined,
-  TEMEMORY_LLM_BASE_URL: undefined,
-  TEMEMORY_LLM_MODEL: undefined,
+  FOLIO_LLM_API_KEY: undefined,
+  FOLIO_LLM_BASE_URL: undefined,
+  FOLIO_LLM_MODEL: undefined,
 };
 
-function freshHome(): TememoryPaths {
-  return resolvePaths(mkdtempSync(join(tmpdir(), 'tememory-config-')));
+function freshHome(): FolioPaths {
+  return resolvePaths(mkdtempSync(join(tmpdir(), 'folio-config-')));
 }
 
 describe('config', () => {
@@ -88,7 +88,7 @@ describe('config', () => {
 
     // 默认模板本身可被 loadConfig 解析为默认值
     const template = readFileSync(paths.configFile, 'utf8');
-    expect(template).toContain('tememory 配置文件');
+    expect(template).toContain('folio 配置文件');
     expect(loadConfig(paths).llm.model).toBe('gpt-4o-mini');
 
     // 用户改过配置后，ensureHome 不得覆盖
@@ -102,9 +102,9 @@ describe('config', () => {
     const paths = freshHome();
     writeFileSync(paths.configFile, '[llm]\nmodel = "file-model"\n', 'utf8');
 
-    process.env.TEMEMORY_LLM_API_KEY = 'sk-from-env';
-    process.env.TEMEMORY_LLM_BASE_URL = 'https://env.example.com/v1';
-    process.env.TEMEMORY_LLM_MODEL = 'env-model';
+    process.env.FOLIO_LLM_API_KEY = 'sk-from-env';
+    process.env.FOLIO_LLM_BASE_URL = 'https://env.example.com/v1';
+    process.env.FOLIO_LLM_MODEL = 'env-model';
 
     const config = loadConfig(paths);
     expect(config.llm.apiKey).toBe('sk-from-env');
@@ -112,20 +112,20 @@ describe('config', () => {
     expect(config.llm.model).toBe('env-model');
   });
 
-  it('TEMEMORY_HOME 环境变量参与路径解析，显式参数优先', () => {
-    const envHome = mkdtempSync(join(tmpdir(), 'tememory-envhome-'));
-    const argHome = mkdtempSync(join(tmpdir(), 'tememory-arghome-'));
-    const saved = process.env.TEMEMORY_HOME;
+  it('FOLIO_HOME 环境变量参与路径解析，显式参数优先', () => {
+    const envHome = mkdtempSync(join(tmpdir(), 'folio-envhome-'));
+    const argHome = mkdtempSync(join(tmpdir(), 'folio-arghome-'));
+    const saved = process.env.FOLIO_HOME;
     try {
-      process.env.TEMEMORY_HOME = envHome;
+      process.env.FOLIO_HOME = envHome;
       expect(resolvePaths().home).toBe(envHome);
       expect(resolvePaths(argHome).home).toBe(argHome);
       expect(resolvePaths().configFile).toBe(join(envHome, 'config.toml'));
       expect(resolvePaths().indexFile).toBe(join(envHome, 'memory', 'MEMORY.md'));
       expect(resolvePaths().stateFile).toBe(join(envHome, 'state', 'sync-state.json'));
     } finally {
-      if (saved === undefined) delete process.env.TEMEMORY_HOME;
-      else process.env.TEMEMORY_HOME = saved;
+      if (saved === undefined) delete process.env.FOLIO_HOME;
+      else process.env.FOLIO_HOME = saved;
     }
   });
 

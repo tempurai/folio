@@ -1,9 +1,9 @@
 {
-  "name": "@tememory/mcp-server",
+  "name": "@folio/mcp-server",
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "stdio MCP server for tememory: serves the local memory bank as 5 tools plus a memory://index resource.",
+  "description": "stdio MCP server for folio: serves the local memory bank as 5 tools plus a memory://index resource.",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.31.0",
-    "@tememory/core": "workspace:*",
+    "@folio/core": "workspace:*",
     "zod": "4.6.5"
   },
   "devDependencies": {

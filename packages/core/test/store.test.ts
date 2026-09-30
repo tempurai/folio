@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MemorySource } from '../src/model.js';
 import { resolvePaths } from '../src/paths.js';
-import type { TememoryPaths } from '../src/paths.js';
+import type { FolioPaths } from '../src/paths.js';
 import { MemoryStore } from '../src/store.js';
 
 const source: MemorySource = {
@@ -14,11 +14,11 @@ const source: MemorySource = {
 };
 
 describe('MemoryStore', () => {
-  let paths: TememoryPaths;
+  let paths: FolioPaths;
   let store: MemoryStore;
 
   beforeEach(() => {
-    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'tememory-store-')));
+    paths = resolvePaths(mkdtempSync(join(tmpdir(), 'folio-store-')));
     store = new MemoryStore(paths);
     store.init();
   });
@@ -68,8 +68,8 @@ describe('MemoryStore', () => {
   });
 
   it('同 hash + scope 去重并返回 created:false；不同 scope 不去重', () => {
-    const first = store.create({ content: '重复的内容', type: 'project', scope: 'project:tememory', source });
-    const second = store.create({ content: '重复的内容\r\n', type: 'project', scope: 'project:tememory', source });
+    const first = store.create({ content: '重复的内容', type: 'project', scope: 'project:folio', source });
+    const second = store.create({ content: '重复的内容\r\n', type: 'project', scope: 'project:folio', source });
     expect(first.created).toBe(true);
     expect(second.created).toBe(false);
     expect(second.memory.id).toBe(first.memory.id);
@@ -171,7 +171,7 @@ describe('MemoryStore', () => {
       content: '已归档',
       title: '归档记忆',
       type: 'project',
-      scope: 'project:tememory',
+      scope: 'project:folio',
       source,
     }).memory;
     store.archive(gone.id);

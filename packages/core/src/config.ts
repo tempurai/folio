@@ -2,10 +2,10 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { parse as parseToml, stringify as stringifyToml } from 'smol-toml';
 import { z } from 'zod';
 import { MEMORY_TYPES } from './model.js';
-import type { TememoryPaths } from './paths.js';
+import type { FolioPaths } from './paths.js';
 import { join } from 'node:path';
 
-export interface TememoryConfig {
+export interface FolioConfig {
   llm: {
     enabled: boolean;
     apiKey?: string;
@@ -41,14 +41,14 @@ const configSchema = z.object({
   adapters: z.record(z.string(), adapterSchema).default({}),
 });
 
-const DEFAULT_CONFIG_TEMPLATE = `# tememory 配置文件
-# 本文件由 tememory 自动生成。可手动编辑；环境变量优先级高于本文件：
-#   TEMEMORY_LLM_API_KEY / TEMEMORY_LLM_BASE_URL / TEMEMORY_LLM_MODEL
+const DEFAULT_CONFIG_TEMPLATE = `# folio 配置文件
+# 本文件由 folio 自动生成。可手动编辑；环境变量优先级高于本文件：
+#   FOLIO_LLM_API_KEY / FOLIO_LLM_BASE_URL / FOLIO_LLM_MODEL
 
 [llm]
 # 是否启用 LLM 辅助能力（记忆分类、自动整理等）
 enabled = true
-# LLM API Key。建议不要写进文件，改用环境变量 TEMEMORY_LLM_API_KEY
+# LLM API Key。建议不要写进文件，改用环境变量 FOLIO_LLM_API_KEY
 # apiKey = "sk-..."
 # OpenAI 兼容接口的 Base URL
 baseURL = "https://api.openai.com/v1"
@@ -67,22 +67,22 @@ autoOrganize = false
 # enabled = false
 `;
 
-export function loadConfig(paths: TememoryPaths): TememoryConfig {
+export function loadConfig(paths: FolioPaths): FolioConfig {
   let raw: unknown = {};
   if (existsSync(paths.configFile)) {
     raw = parseToml(readFileSync(paths.configFile, 'utf8'));
   }
-  const config: TememoryConfig = configSchema.parse(raw);
-  const apiKey = process.env.TEMEMORY_LLM_API_KEY;
+  const config: FolioConfig = configSchema.parse(raw);
+  const apiKey = process.env.FOLIO_LLM_API_KEY;
   if (apiKey) config.llm.apiKey = apiKey;
-  const baseURL = process.env.TEMEMORY_LLM_BASE_URL;
+  const baseURL = process.env.FOLIO_LLM_BASE_URL;
   if (baseURL) config.llm.baseURL = baseURL;
-  const model = process.env.TEMEMORY_LLM_MODEL;
+  const model = process.env.FOLIO_LLM_MODEL;
   if (model) config.llm.model = model;
   return config;
 }
 
-export function ensureHome(paths: TememoryPaths): { created: boolean } {
+export function ensureHome(paths: FolioPaths): { created: boolean } {
   mkdirSync(paths.home, { recursive: true });
   mkdirSync(paths.memoryDir, { recursive: true });
   for (const type of MEMORY_TYPES) {
@@ -106,7 +106,7 @@ export function ensureHome(paths: TememoryPaths): { created: boolean } {
  * 原样落盘——若 llm.apiKey 来自环境变量覆盖（loadConfig 的行为），
  * 调用方需自行判断是否希望它写入文件。
  */
-export function saveConfig(paths: TememoryPaths, config: TememoryConfig): void {
+export function saveConfig(paths: FolioPaths, config: FolioConfig): void {
   const data = {
     llm: {
       enabled: config.llm.enabled,
@@ -126,8 +126,8 @@ export function saveConfig(paths: TememoryPaths, config: TememoryConfig): void {
 
 /** patchConfig 用的深补丁：llm/sync 子对象可只给部分字段，缺省字段保持不变 */
 export interface ConfigPatch {
-  llm?: Partial<TememoryConfig['llm']>;
-  sync?: Partial<TememoryConfig['sync']>;
+  llm?: Partial<FolioConfig['llm']>;
+  sync?: Partial<FolioConfig['sync']>;
   adapters?: Record<string, { enabled: boolean }>;
 }
 
@@ -136,9 +136,9 @@ function withoutUndefined<T extends Record<string, unknown>>(obj: T): Partial<T>
 }
 
 /** loadConfig → 深合并 patch → saveConfig，返回合并后的新配置 */
-export function patchConfig(paths: TememoryPaths, patch: ConfigPatch): TememoryConfig {
+export function patchConfig(paths: FolioPaths, patch: ConfigPatch): FolioConfig {
   const current = loadConfig(paths);
-  const merged: TememoryConfig = {
+  const merged: FolioConfig = {
     llm: { ...current.llm, ...withoutUndefined(patch.llm ?? {}) },
     sync: { ...current.sync, ...withoutUndefined(patch.sync ?? {}) },
     adapters: { ...current.adapters, ...patch.adapters },

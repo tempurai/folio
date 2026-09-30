@@ -16,8 +16,8 @@ const ENV_KEYS = [
   'CLAUDE_CONFIG_DIR',
   'CODEX_HOME',
   'KIMI_CODE_HOME',
-  'TEMEMORY_CURSOR_HOME',
-  'TEMEMORY_ZCODE_HOME',
+  'FOLIO_CURSOR_HOME',
+  'FOLIO_ZCODE_HOME',
   'HOME',
 ] as const;
 
@@ -42,16 +42,16 @@ beforeEach(() => {
   for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
   // fixtures 会被 install/uninstall 写入，复制到临时目录再指向它；
   // HOME 指向临时目录，避免 claude-code 的 ~/.claude.json 落到真实用户目录
-  fixtures = mkdtempSync(join(tmpdir(), 'tememory-desktop-fixtures-'));
+  fixtures = mkdtempSync(join(tmpdir(), 'folio-desktop-fixtures-'));
   cpSync(FIXTURE_SRC, fixtures, { recursive: true });
-  fakeHome = mkdtempSync(join(tmpdir(), 'tememory-desktop-fakehome-'));
-  home = mkdtempSync(join(tmpdir(), 'tememory-desktop-home-'));
+  fakeHome = mkdtempSync(join(tmpdir(), 'folio-desktop-fakehome-'));
+  home = mkdtempSync(join(tmpdir(), 'folio-desktop-home-'));
   tempDirs = [fixtures, fakeHome, home];
   process.env.CLAUDE_CONFIG_DIR = join(fixtures, 'claude-code');
   process.env.CODEX_HOME = join(fixtures, 'codex');
   process.env.KIMI_CODE_HOME = join(fixtures, 'kimi-code');
-  process.env.TEMEMORY_CURSOR_HOME = join(fixtures, 'cursor');
-  process.env.TEMEMORY_ZCODE_HOME = join(fixtures, 'zcode');
+  process.env.FOLIO_CURSOR_HOME = join(fixtures, 'cursor');
+  process.env.FOLIO_ZCODE_HOME = join(fixtures, 'zcode');
   process.env.HOME = fakeHome;
   services = createServices({ home, cipher });
 });
@@ -94,7 +94,7 @@ describe('tree:list 形状', () => {
       expect(Array.isArray(file.tags)).toBe(true);
     }
     // 索引文件随之生成
-    expect(services.readIndex()).toContain('# tememory 记忆索引');
+    expect(services.readIndex()).toContain('# folio 记忆索引');
   });
 });
 

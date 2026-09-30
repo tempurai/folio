@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HarnessAdapter, RawMemoryItem } from '../src/adapters/types.js';
 import type { SyncState } from '../src/model.js';
 import { resolvePaths } from '../src/paths.js';
-import type { TememoryPaths } from '../src/paths.js';
+import type { FolioPaths } from '../src/paths.js';
 import { MemoryStore } from '../src/store.js';
 import { runSync } from '../src/sync.js';
 import type { SyncEvent } from '../src/sync.js';
@@ -48,17 +48,17 @@ function makeItem(
   };
 }
 
-function readState(paths: TememoryPaths): SyncState {
+function readState(paths: FolioPaths): SyncState {
   return JSON.parse(readFileSync(paths.stateFile, 'utf8')) as SyncState;
 }
 
 describe('runSync', () => {
   let home: string;
-  let paths: TememoryPaths;
+  let paths: FolioPaths;
   let store: MemoryStore;
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'tememory-sync-'));
+    home = mkdtempSync(join(tmpdir(), 'folio-sync-'));
     paths = resolvePaths(home);
     store = new MemoryStore(paths);
     store.init();
@@ -243,8 +243,8 @@ describe('runSync', () => {
     try {
       const { port } = server.address() as AddressInfo;
       // baseURL 带尾部 /，验证容错；env 变量提供 apiKey
-      vi.stubEnv('TEMEMORY_LLM_API_KEY', 'test-key');
-      vi.stubEnv('TEMEMORY_LLM_BASE_URL', `http://127.0.0.1:${port}/v1/`);
+      vi.stubEnv('FOLIO_LLM_API_KEY', 'test-key');
+      vi.stubEnv('FOLIO_LLM_BASE_URL', `http://127.0.0.1:${port}/v1/`);
 
       const { adapter } = fakeAdapter('fake-a', [makeItem('/a/1.md', '一条待分类的记忆')]);
       const report = await runSync({ home, adapters: [adapter], classify: true });

@@ -1,4 +1,4 @@
-import type { TememoryConfig } from './config.js';
+import type { FolioConfig } from './config.js';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -20,7 +20,7 @@ interface ChatCompletionResponse {
   choices?: Array<{ message?: { content?: unknown } }>;
 }
 
-export function createLlmClient(cfg: TememoryConfig): LlmClient | null {
+export function createLlmClient(cfg: FolioConfig): LlmClient | null {
   if (!cfg.llm.enabled) return null;
   const apiKey = cfg.llm.apiKey;
   if (!apiKey) return null;

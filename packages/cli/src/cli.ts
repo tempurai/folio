@@ -33,12 +33,12 @@ function readCliVersion(): string {
 export function createProgram(): Command {
   const program = new Command();
   program
-    .name('tememory')
-    .description('tememory：跨 AI harness 的个人记忆库（同步 / 检索 / 整理 / MCP 接入）')
+    .name('folio')
+    .description('folio：跨 AI harness 的个人记忆库（同步 / 检索 / 整理 / MCP 接入）')
     .version(readCliVersion(), '-V, --version', '显示版本号')
-    .option('--home <dir>', 'tememory 主目录（优先级高于 TEMEMORY_HOME，默认 ~/.tememory）')
+    .option('--home <dir>', 'folio 主目录（优先级高于 FOLIO_HOME，默认 ~/.folio）')
     .option('--json', '以 JSON 格式输出结果（机器可读）')
-    .showHelpAfterError('（运行 tememory <命令> --help 查看该命令用法）')
+    .showHelpAfterError('（运行 folio <命令> --help 查看该命令用法）')
     // 必须在注册子命令之前调用：_exitCallback 只在 .command() 创建子命令时继承
     .exitOverride();
 

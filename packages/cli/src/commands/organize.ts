@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
-import { applyOrganize, createLlmClient, loadConfig, planOrganize } from '@tememory/core';
-import type { OrganizeOp, OrganizePlan } from '@tememory/core';
+import { applyOrganize, createLlmClient, loadConfig, planOrganize } from '@folio/core';
+import type { OrganizeOp, OrganizePlan } from '@folio/core';
 import { globalsOf, openStore, parseCount, printJson } from '../common.js';
 
 interface OrganizeCmdOpts {
@@ -74,7 +74,7 @@ export function registerOrganize(program: Command): void {
       );
       for (const err of report.errors) console.log(`错误：${err}`);
       if (report.merged > 0) {
-        console.log('被合并的记忆已移入归档目录，可用 tememory list --archived 查看。');
+        console.log('被合并的记忆已移入归档目录，可用 folio list --archived 查看。');
       }
     });
 }

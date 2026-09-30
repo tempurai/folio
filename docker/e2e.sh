@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tememory 容器端到端验证脚本（仅运行于 docker/Dockerfile 构建的镜像内，不碰宿主机）。
+# folio 容器端到端验证脚本（仅运行于 docker/Dockerfile 构建的镜像内，不碰宿主机）。
 # 流程：伪造 5 家 harness 的 home（走默认路径，不用 env 覆盖）→ init →
 # sync（首轮导入 / 幂等 / 更新 / 删除）→ list/search/show/stats/conflicts/organize/doctor →
 # install/uninstall 五家 MCP 配置 → MCP stdio 冒烟。任何断言失败即非零退出。
@@ -9,7 +9,7 @@ CLI=(node /workspace/packages/cli/dist/cli.js)
 PROJ=/tmp/workspace/proj-demo
 WORK=/tmp/e2e/out
 
-export TEMEMORY_HOME=/tmp/e2e/tememory
+export FOLIO_HOME=/tmp/e2e/folio
 export HOME=/tmp/e2e/home
 
 step_no=0
@@ -34,8 +34,8 @@ if [ -f /opt/harness-report.txt ]; then
 fi
 
 # ---------------------------------------------------------------------------
-step "准备隔离环境（TEMEMORY_HOME=$TEMEMORY_HOME，HOME=$HOME）"
-mkdir -p "$PROJ" "$HOME" "$TEMEMORY_HOME"
+step "准备隔离环境（FOLIO_HOME=$FOLIO_HOME，HOME=$HOME）"
+mkdir -p "$PROJ" "$HOME" "$FOLIO_HOME"
 cd "$PROJ"
 ok "工作目录 $(pwd)"
 
@@ -279,44 +279,44 @@ const entryOk = (entry) =>
   !!entry && entry.command === 'node' && JSON.stringify(entry.args) === JSON.stringify(EXPECT_ARGS);
 const jsonAt = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const targets = [
-  { name: 'Claude Code', path: `${HOME}/.claude.json`, get: (j) => j?.mcpServers?.tememory, keep: (j) => j.theme === 'dark' },
-  { name: 'Cursor', path: `${HOME}/.cursor/mcp.json`, get: (j) => j?.mcpServers?.tememory },
-  { name: 'Kimi Code', path: `${HOME}/.kimi-code/mcp.json`, get: (j) => j?.mcpServers?.tememory },
-  { name: 'ZCode（嵌套 mcp.servers）', path: `${HOME}/.zcode/cli/config.json`, get: (j) => j?.mcp?.servers?.tememory, keep: (j) => j.theme === 'dark' },
+  { name: 'Claude Code', path: `${HOME}/.claude.json`, get: (j) => j?.mcpServers?.folio, keep: (j) => j.theme === 'dark' },
+  { name: 'Cursor', path: `${HOME}/.cursor/mcp.json`, get: (j) => j?.mcpServers?.folio },
+  { name: 'Kimi Code', path: `${HOME}/.kimi-code/mcp.json`, get: (j) => j?.mcpServers?.folio },
+  { name: 'ZCode（嵌套 mcp.servers）', path: `${HOME}/.zcode/cli/config.json`, get: (j) => j?.mcp?.servers?.folio, keep: (j) => j.theme === 'dark' },
 ];
 
 if (mode === 'installed') {
   for (const t of targets) {
     const j = jsonAt(t.path);
-    if (!entryOk(t.get(j))) die(`${t.name}（${t.path}）的 tememory 条目不正确：${JSON.stringify(t.get(j))}`);
+    if (!entryOk(t.get(j))) die(`${t.name}（${t.path}）的 folio 条目不正确：${JSON.stringify(t.get(j))}`);
     if (t.keep && !t.keep(j)) die(`${t.name}（${t.path}）原有配置字段丢失`);
   }
   const toml = fs.readFileSync(`${HOME}/.codex/config.toml`, 'utf8');
-  if (!/\[mcp_servers\.tememory\]/.test(toml)) die('codex config.toml 缺少 [mcp_servers.tememory] 段');
+  if (!/\[mcp_servers\.folio\]/.test(toml)) die('codex config.toml 缺少 [mcp_servers.folio] 段');
   if (!/command\s*=\s*"node"/.test(toml)) die('codex config.toml 缺少 command = "node"');
   if (!/args\s*=\s*\[[^\]]*cli\.js[^\]]*"serve"\s*\]/.test(toml)) die('codex config.toml 的 args 不正确');
   if (!/model\s*=\s*"gpt-5-codex"/.test(toml)) die('codex config.toml 原有 model 字段丢失');
-  console.log('  ✔ 5 个 harness 配置中的 tememory 条目均正确，原有字段保留');
+  console.log('  ✔ 5 个 harness 配置中的 folio 条目均正确，原有字段保留');
 } else if (mode === 'removed') {
   for (const t of targets) {
     const j = jsonAt(t.path);
-    if (t.get(j) !== undefined) die(`${t.name}（${t.path}）中 tememory 条目未被移除`);
+    if (t.get(j) !== undefined) die(`${t.name}（${t.path}）中 folio 条目未被移除`);
   }
   const toml = fs.readFileSync(`${HOME}/.codex/config.toml`, 'utf8');
-  if (/tememory/.test(toml)) die('codex config.toml 中仍残留 tememory');
+  if (/folio/.test(toml)) die('codex config.toml 中仍残留 folio');
   if (!/model\s*=\s*"gpt-5-codex"/.test(toml)) die('codex config.toml 原有 model 字段丢失');
-  console.log('  ✔ uninstall 后 5 个 harness 配置中的 tememory 条目均已移除，原有字段保留');
+  console.log('  ✔ uninstall 后 5 个 harness 配置中的 folio 条目均已移除，原有字段保留');
 } else {
   die(`未知模式：${mode}`);
 }
 EOF
 
 # ---------------------------------------------------------------------------
-step "tememory init"
+step "folio init"
 "${CLI[@]}" init > "$WORK/init.txt" 2>&1
-need_file "$TEMEMORY_HOME/config.toml"
-for t in user feedback project reference; do need_dir "$TEMEMORY_HOME/memory/$t"; done
-need_grep "$WORK/init.txt" "已创建 tememory 主目录"
+need_file "$FOLIO_HOME/config.toml"
+for t in user feedback project reference; do need_dir "$FOLIO_HOME/memory/$t"; done
+need_grep "$WORK/init.txt" "已创建 folio 主目录"
 ok "主目录结构生成（config.toml + memory/四类目录）"
 
 # ---------------------------------------------------------------------------
@@ -476,7 +476,7 @@ try {
   const init = await request('initialize', {
     protocolVersion: '2024-11-05',
     capabilities: {},
-    clientInfo: { name: 'tememory-e2e', version: '0.0.1' },
+    clientInfo: { name: 'folio-e2e', version: '0.0.1' },
   });
   if (!init.result?.serverInfo?.name) fail(`initialize 响应异常：${JSON.stringify(init)}`);
   notify('notifications/initialized', {});

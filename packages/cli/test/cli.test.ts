@@ -56,24 +56,24 @@ function runJson<T>(args: string[]): T {
 }
 
 beforeAll(() => {
-  home = mkdtempSync(join(tmpdir(), 'tememory-cli-home-'));
-  fakeHome = mkdtempSync(join(tmpdir(), 'tememory-cli-fakehome-'));
-  workDir = mkdtempSync(join(tmpdir(), 'tememory-cli-workdir-'));
-  fixtures = mkdtempSync(join(tmpdir(), 'tememory-cli-fixtures-'));
+  home = mkdtempSync(join(tmpdir(), 'folio-cli-home-'));
+  fakeHome = mkdtempSync(join(tmpdir(), 'folio-cli-fakehome-'));
+  workDir = mkdtempSync(join(tmpdir(), 'folio-cli-workdir-'));
+  fixtures = mkdtempSync(join(tmpdir(), 'folio-cli-fixtures-'));
   cpSync(FIXTURE_SRC, fixtures, { recursive: true });
   baseEnv = {
     ...process.env,
-    TEMEMORY_HOME: home,
+    FOLIO_HOME: home,
     HOME: fakeHome,
     CLAUDE_CONFIG_DIR: join(fixtures, 'claude-code'),
     CODEX_HOME: join(fixtures, 'codex'),
     KIMI_CODE_HOME: join(fixtures, 'kimi-code'),
-    TEMEMORY_CURSOR_HOME: join(fixtures, 'cursor'),
-    TEMEMORY_ZCODE_HOME: join(fixtures, 'zcode'),
+    FOLIO_CURSOR_HOME: join(fixtures, 'cursor'),
+    FOLIO_ZCODE_HOME: join(fixtures, 'zcode'),
     // 保证 organize/sync 走本地路径，不触碰真实 LLM
-    TEMEMORY_LLM_API_KEY: '',
-    TEMEMORY_LLM_BASE_URL: '',
-    TEMEMORY_LLM_MODEL: '',
+    FOLIO_LLM_API_KEY: '',
+    FOLIO_LLM_BASE_URL: '',
+    FOLIO_LLM_MODEL: '',
   };
 });
 
@@ -336,7 +336,7 @@ describe('install / uninstall', () => {
 
     const file = join(fixtures, 'kimi-code', 'mcp.json');
     const parsed = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
-    expect(parsed.mcpServers.tememory).toEqual({
+    expect(parsed.mcpServers.folio).toEqual({
       command: 'node',
       args: ['/abs/path/cli.js', 'serve'],
     });
@@ -350,7 +350,7 @@ describe('install / uninstall', () => {
     const backupParsed = JSON.parse(
       readFileSync(join(fixtures, 'kimi-code', backups[0]), 'utf8'),
     ) as Record<string, any>;
-    expect(backupParsed.mcpServers.tememory).toBeUndefined();
+    expect(backupParsed.mcpServers.folio).toBeUndefined();
   });
 
   it('install --all 写入全部 5 家（JSON/TOML/嵌套路径/新建 ~/.claude.json），重复安装提示覆盖', () => {
@@ -362,14 +362,14 @@ describe('install / uninstall', () => {
     const cursor = JSON.parse(
       readFileSync(join(fixtures, 'cursor', 'mcp.json'), 'utf8'),
     ) as Record<string, any>;
-    expect(cursor.mcpServers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(cursor.mcpServers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(cursor.mcpServers.docs).toEqual({ url: 'https://mcp.example.com/sse' });
     expect(cursor.editor).toEqual({ enabled: true });
 
     const zcode = JSON.parse(
       readFileSync(join(fixtures, 'zcode', 'cli', 'config.json'), 'utf8'),
     ) as Record<string, any>;
-    expect(zcode.mcp.servers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(zcode.mcp.servers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(zcode.mcp.servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(zcode.mcp.timeoutMs).toBe(5000);
     expect(zcode.theme).toBe('dark');
@@ -377,14 +377,14 @@ describe('install / uninstall', () => {
     const codex = parseToml(
       readFileSync(join(fixtures, 'codex', 'config.toml'), 'utf8'),
     ) as Record<string, any>;
-    expect(codex.mcp_servers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(codex.mcp_servers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(codex.mcp_servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(codex.model).toBe('gpt-5-codex');
 
     // claude-code 的配置在 HOME 根的 .claude.json（原本不存在 → 新建，无备份）
     const claudeFile = join(fakeHome, '.claude.json');
     const claude = JSON.parse(readFileSync(claudeFile, 'utf8')) as Record<string, any>;
-    expect(claude.mcpServers.tememory).toEqual({ command: 'tememory', args: ['serve'] });
+    expect(claude.mcpServers.folio).toEqual({ command: 'folio', args: ['serve'] });
     expect(
       readdirSync(fakeHome).filter((f) => f.startsWith('.claude.json.bak-')),
     ).toHaveLength(0);
@@ -407,21 +407,21 @@ describe('install / uninstall', () => {
     const kimi = JSON.parse(
       readFileSync(join(fixtures, 'kimi-code', 'mcp.json'), 'utf8'),
     ) as Record<string, any>;
-    expect(kimi.mcpServers.tememory).toBeUndefined();
+    expect(kimi.mcpServers.folio).toBeUndefined();
     expect(kimi.mcpServers.web).toEqual({ command: 'uvx', args: ['web-mcp'] });
     expect(kimi.locale).toBe('zh-CN');
 
     const codex = parseToml(
       readFileSync(join(fixtures, 'codex', 'config.toml'), 'utf8'),
     ) as Record<string, any>;
-    expect(codex.mcp_servers.tememory).toBeUndefined();
+    expect(codex.mcp_servers.folio).toBeUndefined();
     expect(codex.mcp_servers.fs).toEqual({ command: 'npx', args: ['-y', 'server-fs'] });
     expect(codex.model).toBe('gpt-5-codex');
 
     const claude = JSON.parse(
       readFileSync(join(fakeHome, '.claude.json'), 'utf8'),
     ) as Record<string, any>;
-    expect(claude.mcpServers.tememory).toBeUndefined();
+    expect(claude.mcpServers.folio).toBeUndefined();
 
     const again = run(['uninstall', '--all']);
     expect(again.status).toBe(0);
@@ -492,14 +492,14 @@ describe('全局行为', () => {
     expect(run(['list']).status).toBe(0);
   });
 
-  it('--home 优先级高于 TEMEMORY_HOME，且可放在子命令之后', () => {
-    const other = mkdtempSync(join(tmpdir(), 'tememory-cli-other-'));
+  it('--home 优先级高于 FOLIO_HOME，且可放在子命令之后', () => {
+    const other = mkdtempSync(join(tmpdir(), 'folio-cli-other-'));
     const created = run(['init', '--home', other]);
     expect(created.status).toBe(0);
     expect(created.stdout).toContain(other);
     expect(existsSync(join(other, 'config.toml'))).toBe(true);
 
-    // --home 放前面也生效；该目录与 TEMEMORY_HOME 相互独立
+    // --home 放前面也生效；该目录与 FOLIO_HOME 相互独立
     const list = run(['--home', other, 'list', '--json']);
     expect(list.status).toBe(0);
     expect(JSON.parse(list.stdout)).toEqual([]);

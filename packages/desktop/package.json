@@ -1,16 +1,16 @@
 {
-  "name": "@tememory/desktop",
+  "name": "@folio/desktop",
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Electron desktop app for tememory: browse, search, edit, and organize the local AI-coding memory bank (in development).",
+  "description": "Electron desktop app for folio: browse, search, edit, and organize the local AI-coding memory bank (in development).",
   "license": "MIT",
   "main": "out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "start": "electron-vite preview",
-    "pretest": "pnpm --filter @tememory/core build",
+    "pretest": "pnpm --filter @folio/core build",
     "test": "vitest run",
     "ui-smoke": "node scripts/ui-smoke.mjs"
   },
@@ -22,7 +22,7 @@
     "@radix-ui/react-slot": "1.3.3",
     "@radix-ui/react-switch": "1.3.7",
     "@radix-ui/react-tooltip": "1.2.16",
-    "@tememory/core": "workspace:*",
+    "@folio/core": "workspace:*",
     "chokidar": "4.0.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",

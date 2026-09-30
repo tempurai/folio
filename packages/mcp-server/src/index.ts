@@ -11,8 +11,8 @@ import {
   resolvePaths,
   SearchIndex,
   tokenize,
-} from '@tememory/core';
-import type { UpdatePatch } from '@tememory/core';
+} from '@folio/core';
+import type { UpdatePatch } from '@folio/core';
 import { z } from 'zod';
 
 export interface McpServerOptions {
@@ -97,12 +97,12 @@ export async function createMcpServer(opts?: McpServerOptions): Promise<McpServe
   const rebuildSearchIndex = () => searchIndex.build(store.all());
   rebuildSearchIndex();
 
-  const server = new McpServer({ name: 'tememory', version: readServerVersion() });
+  const server = new McpServer({ name: 'folio', version: readServerVersion() });
 
   server.registerTool(
     'memory_search',
     {
-      description: '在 tememory 记忆库中全文检索，返回按相关度排序的命中列表',
+      description: '在 folio 记忆库中全文检索，返回按相关度排序的命中列表',
       inputSchema: {
         query: z.string().min(1).describe('检索词，支持中文与英文'),
         type: memoryTypeSchema.optional().describe('按记忆类型过滤'),
@@ -137,7 +137,7 @@ export async function createMcpServer(opts?: McpServerOptions): Promise<McpServe
   server.registerTool(
     'memory_list',
     {
-      description: '分页列出 tememory 记忆库中的记忆元数据（不含正文）',
+      description: '分页列出 folio 记忆库中的记忆元数据（不含正文）',
       inputSchema: {
         type: memoryTypeSchema.optional().describe('按记忆类型过滤'),
         scope: z.string().optional().describe('按作用域过滤'),
@@ -237,7 +237,7 @@ export async function createMcpServer(opts?: McpServerOptions): Promise<McpServe
     'memory-index',
     'memory://index',
     {
-      description: 'tememory 记忆库索引文件（MEMORY.md）的当前内容',
+      description: 'folio 记忆库索引文件（MEMORY.md）的当前内容',
       mimeType: 'text/markdown',
     },
     async (uri) => ({
@@ -257,5 +257,5 @@ export async function createMcpServer(opts?: McpServerOptions): Promise<McpServe
 export async function startMcpServer(opts?: McpServerOptions): Promise<void> {
   const server = await createMcpServer(opts);
   await server.connect(new StdioServerTransport());
-  console.error(`[tememory] MCP server ready on stdio (home: ${resolvePaths(opts?.home).home})`);
+  console.error(`[folio] MCP server ready on stdio (home: ${resolvePaths(opts?.home).home})`);
 }

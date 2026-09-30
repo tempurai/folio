@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import { startMcpServer } from '@tememory/mcp-server';
+import { startMcpServer } from '@folio/mcp-server';
 import { globalsOf } from '../common.js';
 
 export function registerServe(program: Command): void {

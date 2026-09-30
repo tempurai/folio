@@ -1,9 +1,9 @@
 {
-  "name": "@tememory/cli",
+  "name": "@folio/cli",
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "tememory command-line interface: init, sync, watch, search, organize, serve, and MCP install for the local AI-coding memory bank.",
+  "description": "folio command-line interface: init, sync, watch, search, organize, serve, and MCP install for the local AI-coding memory bank.",
   "license": "MIT",
   "keywords": [
     "memory",
@@ -19,19 +19,19 @@
     "node": ">=18"
   },
   "bin": {
-    "tememory": "dist/cli.js"
+    "folio": "dist/cli.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsup",
-    "pretest": "pnpm --filter @tememory/cli... build",
+    "pretest": "pnpm --filter @folio/cli... build",
     "test": "vitest run"
   },
   "dependencies": {
-    "@tememory/core": "workspace:*",
-    "@tememory/mcp-server": "workspace:*",
+    "@folio/core": "workspace:*",
+    "@folio/mcp-server": "workspace:*",
     "chokidar": "4.0.3",
     "commander": "13.1.0",
     "smol-toml": "1.9.0"

@@ -24,7 +24,7 @@ function cspPlugin(mode: string): Plugin {
     "img-src 'self' data:; connect-src 'self' ws: http://localhost:*; font-src 'self'";
   const content = mode === 'development' ? dev : prod;
   return {
-    name: 'tememory-csp',
+    name: 'folio-csp',
     transformIndexHtml(html) {
       return html.replace(
         '</head>',

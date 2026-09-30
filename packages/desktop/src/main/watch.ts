@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { adapters, runSync } from '@tememory/core';
-import type { SyncReport } from '@tememory/core';
+import { adapters, runSync } from '@folio/core';
+import type { SyncReport } from '@folio/core';
 import { watch } from 'chokidar';
 import type { FSWatcher } from 'chokidar';
 
@@ -9,9 +9,9 @@ import type { FSWatcher } from 'chokidar';
 const HARNESS_HOME_RESOLVERS: Record<string, () => string> = {
   'claude-code': () => process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude'),
   codex: () => process.env.CODEX_HOME ?? join(homedir(), '.codex'),
-  cursor: () => process.env.TEMEMORY_CURSOR_HOME ?? join(homedir(), '.cursor'),
+  cursor: () => process.env.FOLIO_CURSOR_HOME ?? join(homedir(), '.cursor'),
   'kimi-code': () => process.env.KIMI_CODE_HOME ?? join(homedir(), '.kimi-code'),
-  zcode: () => process.env.TEMEMORY_ZCODE_HOME ?? join(homedir(), '.zcode'),
+  zcode: () => process.env.FOLIO_ZCODE_HOME ?? join(homedir(), '.zcode'),
 };
 
 export interface MemoryWatcherOptions {

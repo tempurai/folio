@@ -14,7 +14,7 @@ const ID = 'cursor';
 const CURSOR_RULE_KEYS = ['description', 'globs', 'alwaysApply'] as const;
 
 function cursorHome(): string {
-  return resolveHarnessHome('TEMEMORY_CURSOR_HOME', '.cursor');
+  return resolveHarnessHome('FOLIO_CURSOR_HOME', '.cursor');
 }
 
 function cursorRuleMeta(frontmatter: Record<string, unknown>): Record<string, unknown> | undefined {

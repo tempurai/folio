@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { HarnessAdapter, RawMemoryItem } from '../src/adapters/types.js';
 import { resolvePaths } from '../src/paths.js';
-import type { TememoryPaths } from '../src/paths.js';
+import type { FolioPaths } from '../src/paths.js';
 import { readActivity, runSync } from '../src/sync.js';
 import type { ActivityEntry } from '../src/sync.js';
 
@@ -37,7 +37,7 @@ function makeEntry(at: string, trigger = 'manual'): ActivityEntry {
   };
 }
 
-function activityLines(paths: TememoryPaths): string[] {
+function activityLines(paths: FolioPaths): string[] {
   return readFileSync(join(paths.stateDir, 'activity.jsonl'), 'utf8')
     .split('\n')
     .filter((line) => line.trim() !== '');
@@ -45,10 +45,10 @@ function activityLines(paths: TememoryPaths): string[] {
 
 describe('activity 日志', () => {
   let home: string;
-  let paths: TememoryPaths;
+  let paths: FolioPaths;
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'tememory-activity-'));
+    home = mkdtempSync(join(tmpdir(), 'folio-activity-'));
     paths = resolvePaths(home);
   });
 

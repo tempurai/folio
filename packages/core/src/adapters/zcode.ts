@@ -14,7 +14,7 @@ import {
 const ID = 'zcode';
 
 function zcodeHome(): string {
-  return resolveHarnessHome('TEMEMORY_ZCODE_HOME', '.zcode');
+  return resolveHarnessHome('FOLIO_ZCODE_HOME', '.zcode');
 }
 
 async function collect(ctx: CollectContext): Promise<RawMemoryItem[]> {

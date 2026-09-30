@@ -1,9 +1,9 @@
 {
-  "name": "tememory-gui-mock",
+  "name": "folio-gui-mock",
   "private": true,
   "version": "0.3.0",
   "type": "module",
-  "description": "tememory 桌面 GUI 高保真设计原型（Vite + React 18 + TS + Tailwind v3 + shadcn/ui）",
+  "description": "folio 桌面 GUI 高保真设计原型（Vite + React 18 + TS + Tailwind v3 + shadcn/ui）",
   "engines": {
     "node": ">=18"
   },

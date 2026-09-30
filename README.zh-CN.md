@@ -1,18 +1,18 @@
-<p align="center"><img src="assets/icons/icon-256.png" width="96" alt="tememory logo"></p>
+<p align="center"><img src="assets/icons/icon-256.png" width="96" alt="folio logo"></p>
 
 [English](README.md) | **中文**
 
-# tememory
+# folio
 
 统一各 AI coding harness（Claude Code、Codex、Cursor、Kimi Code、ZCode）记忆的个人记忆库工具。
 
-每家 harness 都有自己的一套记忆/规则存储，格式各异、互不相通。tememory 把这些分散的记忆**单向导入**一个本地 file-based 记忆库（`~/.tememory`），统一格式、统一检索，再通过 MCP server 把记忆库**服务回去**，让任何支持 MCP 的 harness 都能读到全部记忆。
+每家 harness 都有自己的一套记忆/规则存储，格式各异、互不相通。folio 把这些分散的记忆**单向导入**一个本地 file-based 记忆库（`~/.folio`），统一格式、统一检索，再通过 MCP server 把记忆库**服务回去**，让任何支持 MCP 的 harness 都能读到全部记忆。
 
 ## 三条设计原则
 
 1. **单向导入**：只从 harness 的原生存储读，增量同步进记忆库；**绝不写回** harness 的原生目录。记忆库是唯一真相源，源文件删除后记忆仍保留在库中。
 2. **统一格式**：所有记忆都是 Markdown + frontmatter，分为四类——`user`（用户偏好）、`feedback`（反馈与教训）、`project`（项目状态与决策）、`reference`（参考资料）。
-3. **通过 MCP 服务回去**：记忆库通过 `tememory serve`（stdio MCP server）提供给各 harness；不支持 MCP 的 harness 不做接入。
+3. **通过 MCP 服务回去**：记忆库通过 `folio serve`（stdio MCP server）提供给各 harness；不支持 MCP 的 harness 不做接入。
 
 ## 架构
 
@@ -29,13 +29,13 @@
                         └─────────┬───────────┘
                                    ▼
               ┌──────────────────────────────────────┐
-              │ 本地记忆库 ~/.tememory（唯一真相源）   │
+              │ 本地记忆库 ~/.folio（唯一真相源）   │
               │ memory/<type>/*.md + MEMORY.md 索引   │
               │ state/ 同步状态  cache/ 搜索索引       │
               └─────────┬───────────────────┬────────┘
                         │ ③ 服务             │ 检索/管理
                         ▼                   ▼
-              tememory serve          tememory CLI
+              folio serve          folio CLI
               （stdio MCP server）     list/search/show/stats/
               5 个工具 + 1 个资源       organize/conflicts/doctor
 ```
@@ -56,19 +56,19 @@ pnpm -r build
 npm i -g packages/cli        # 或者：cd packages/cli && pnpm link --global
 
 # 四步走
-tememory init                # ① 初始化 ~/.tememory（目录结构 + 默认 config.toml）
-tememory sync                # ② 从检测到的 harness 增量导入记忆
-tememory organize            # ③ 整理：dry-run 预览（无 API key 时走本地查重规则）
-tememory install --all       # ④ 把 tememory MCP server 注册进各家 harness 配置
+folio init                # ① 初始化 ~/.folio（目录结构 + 默认 config.toml）
+folio sync                # ② 从检测到的 harness 增量导入记忆
+folio organize            # ③ 整理：dry-run 预览（无 API key 时走本地查重规则）
+folio install --all       # ④ 把 folio MCP server 注册进各家 harness 配置
 ```
 
-`install` 默认只面向**已检测到**的 harness，`--all` 面向全部 5 家；写入前会自动备份原配置（`<文件>.bak-<时间戳>`），`tememory uninstall` 可移除注册。
+`install` 默认只面向**已检测到**的 harness，`--all` 面向全部 5 家；写入前会自动备份原配置（`<文件>.bak-<时间戳>`），`folio uninstall` 可移除注册。
 
 不全局安装也可以直接用 `node packages/cli/dist/cli.js <命令>`。
 
 ## 命令参考
 
-全局选项：`--home <dir>`（优先级高于 `TEMEMORY_HOME`，默认 `~/.tememory`）、`--json`（机器可读输出）、`-V/--version`。用法错误退出码 2，运行错误退出码 1。
+全局选项：`--home <dir>`（优先级高于 `FOLIO_HOME`，默认 `~/.folio`）、`--json`（机器可读输出）、`-V/--version`。用法错误退出码 2，运行错误退出码 1。
 
 | 命令 | 作用 | 常用选项 |
 | --- | --- | --- |
@@ -86,14 +86,14 @@ tememory install --all       # ④ 把 tememory MCP server 注册进各家 harne
 | `doctor` | 体检：主目录/配置/适配器/记忆库/搜索索引 | `--check-llm`（额外真实探测 LLM 连通性） |
 | `stats` | 按类型/作用域/来源 harness 分组统计 | — |
 
-## 配置文件 `~/.tememory/config.toml`
+## 配置文件 `~/.folio/config.toml`
 
 `init` 生成的默认配置；环境变量优先级高于文件。
 
 ```toml
 [llm]
 enabled = true                          # LLM 辅助能力总开关（分类、整理）
-# apiKey = "sk-..."                     # 建议用环境变量 TEMEMORY_LLM_API_KEY 代替
+# apiKey = "sk-..."                     # 建议用环境变量 FOLIO_LLM_API_KEY 代替
 baseURL = "https://api.openai.com/v1"   # OpenAI 兼容接口
 model = "gpt-4o-mini"
 classifyOnSync = false                  # sync 时是否自动调 LLM 给新记忆分类
@@ -110,9 +110,9 @@ autoOrganize = false                    # 同步完成后是否自动整理
 
 | 变量 | 作用 |
 | --- | --- |
-| `TEMEMORY_HOME` | 记忆库主目录（默认 `~/.tememory`） |
-| `TEMEMORY_LLM_API_KEY` / `TEMEMORY_LLM_BASE_URL` / `TEMEMORY_LLM_MODEL` | 覆盖 `[llm]` 对应字段 |
-| `CLAUDE_CONFIG_DIR` / `CODEX_HOME` / `TEMEMORY_CURSOR_HOME` / `KIMI_CODE_HOME` / `TEMEMORY_ZCODE_HOME` | 覆盖各 harness 的 home 目录（默认 `~/.claude` 等） |
+| `FOLIO_HOME` | 记忆库主目录（默认 `~/.folio`） |
+| `FOLIO_LLM_API_KEY` / `FOLIO_LLM_BASE_URL` / `FOLIO_LLM_MODEL` | 覆盖 `[llm]` 对应字段 |
+| `CLAUDE_CONFIG_DIR` / `CODEX_HOME` / `FOLIO_CURSOR_HOME` / `KIMI_CODE_HOME` / `FOLIO_ZCODE_HOME` | 覆盖各 harness 的 home 目录（默认 `~/.claude` 等） |
 
 LLM 仅用于两件事：`sync --classify` 的新记忆分类、`organize` 的整理计划生成。未配置 API key 时全部功能可用，`organize` 自动退化为本地查重规则。
 
@@ -130,7 +130,7 @@ LLM 仅用于两件事：`sync --classify` 的新记忆分类、`organize` 的�
 
 ## 记忆文件格式
 
-每条记忆是 `~/.tememory/memory/<type>/` 下的一个 Markdown 文件：
+每条记忆是 `~/.folio/memory/<type>/` 下的一个 Markdown 文件：
 
 ```markdown
 ---
@@ -154,16 +154,16 @@ archived: false               # 可选：合并后归档到 archive/
 正文（Markdown）。
 ```
 
-`MEMORY.md`（记忆库索引）由 tememory 自动重建，请勿手改。
+`MEMORY.md`（记忆库索引）由 folio 自动重建，请勿手改。
 
 ## MCP server
 
-`tememory serve` 以 stdio 启动，提供 5 个工具 + 1 个资源：
+`folio serve` 以 stdio 启动，提供 5 个工具 + 1 个资源：
 
 - 工具：`memory_search`、`memory_list`、`memory_read`、`memory_write`、`memory_update`
 - 资源：`memory://index`（记忆库索引 MEMORY.md 的当前内容）
 
-`tememory install` 注册的默认启动命令是 `tememory serve`，可用 `--command "node /abs/path/cli.js"` 自定义。
+`folio install` 注册的默认启动命令是 `folio serve`，可用 `--command "node /abs/path/cli.js"` 自定义。
 
 ## 隐私
 
@@ -175,8 +175,8 @@ archived: false               # 可选：合并后归档到 archive/
 仓库自带全链路验证镜像（不会往宿主机安装任何 harness）：
 
 ```bash
-docker build -f docker/Dockerfile -t tememory-e2e .   # 构建期完成 pnpm install / build / 全量单测
-docker run --rm tememory-e2e                          # 容器内跑 init→sync→检索→install→MCP 冒烟
+docker build -f docker/Dockerfile -t folio-e2e .   # 构建期完成 pnpm install / build / 全量单测
+docker run --rm folio-e2e                          # 容器内跑 init→sync→检索→install→MCP 冒烟
 ```
 
 镜像会全局安装真实 harness CLI（`@anthropic-ai/claude-code`、`@openai/codex`、`@moonshot-ai/kimi-code`，仅验证可安装性，不登录不运行）；Cursor / ZCode 没有 headless 安装方式，由 `docker/e2e.sh` 按文档布局伪造其 home 目录。任何一步断言失败即非零退出。
@@ -185,18 +185,18 @@ docker run --rm tememory-e2e                          # 容器内跑 init→sync
 
 ## 桌面端（开发中）
 
-`packages/desktop`（`@tememory/desktop`）是 tememory 的 Electron 桌面端，渲染层 1:1 移植自 `gui-mock/` 设计原型（Vite + React 18 + Tailwind 3 + shadcn），数据全部由 `@tememory/core` 经 IPC 真实产出。
+`packages/desktop`（`@folio/desktop`）是 folio 的 Electron 桌面端，渲染层 1:1 移植自 `gui-mock/` 设计原型（Vite + React 18 + Tailwind 3 + shadcn），数据全部由 `@folio/core` 经 IPC 真实产出。
 
 功能：记忆库文件树浏览 / 搜索（⌘K）/ 阅读与编辑 / 新建 / 归档 / Finder 定位、MEMORY.md 索引页、来源页（适配器检测状态 + MCP 注册/注销）、整理页（LLM 计划逐条确认后应用）、活动页（同步日志）、设置页（LLM 端点/模型/Key、适配器开关）、sidebar 手动同步 + watch 自动同步开关。
 
 ```bash
-pnpm --filter @tememory/desktop dev     # 开发模式（electron-vite dev，HMR）
-pnpm --filter @tememory/desktop build   # 产物到 out/{main,preload,renderer}
-pnpm --filter @tememory/desktop start   # 预览已构建产物
-pnpm --filter @tememory/desktop test    # services 单测（vitest，不需要显示器）
+pnpm --filter @folio/desktop dev     # 开发模式（electron-vite dev，HMR）
+pnpm --filter @folio/desktop build   # 产物到 out/{main,preload,renderer}
+pnpm --filter @folio/desktop start   # 预览已构建产物
+pnpm --filter @folio/desktop test    # services 单测（vitest，不需要显示器）
 ```
 
-开发期可用 `TEMEMORY_HOME=/tmp/xxx pnpm --filter @tememory/desktop dev` 指向临时记忆库，不动真实 `~/.tememory`。无 Electron 环境时，`out/renderer` 是纯静态站（mock 数据兜底），任意静态服务器托管即可预览 UI。
+开发期可用 `FOLIO_HOME=/tmp/xxx pnpm --filter @folio/desktop dev` 指向临时记忆库，不动真实 `~/.folio`。无 Electron 环境时，`out/renderer` 是纯静态站（mock 数据兜底），任意静态服务器托管即可预览 UI。
 
 **Node 18 宿主机注意**：electron 44 的 `install.js`（下载二进制的 postinstall）链路上 `@electron/get` v5 要求 Node ≥22，Node 18 下 `pnpm install` 会跳过二进制下载。需要真跑 Electron 时手动补齐（一次性）：
 
@@ -232,7 +232,7 @@ echo "Electron.app" > packages/desktop/node_modules/electron/path.txt
 ```
 packages/
   core/        # 适配器、记忆库、同步、搜索、整理、LLM（冻结公共 API 见 src/index.ts）
-  cli/         # tememory CLI（commander）
+  cli/         # folio CLI（commander）
   mcp-server/  # stdio MCP server（5 工具 + 1 资源）
   desktop/     # Electron 桌面端（开发中；渲染层移植自 gui-mock/）
 docker/        # Dockerfile + e2e.sh（容器化端到端验证）

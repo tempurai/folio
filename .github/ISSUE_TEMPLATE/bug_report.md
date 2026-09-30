@@ -21,12 +21,12 @@ assignees: ''
 - OS:
 - Node.js version (`node -v`):
 - pnpm version (`pnpm -v`):
-- tememory version (`tememory -V`):
+- folio version (`folio -V`):
 - Harness(es) involved (Claude Code / Codex / Cursor / Kimi Code / ZCode):
 
 ## Logs / output
 
-<!-- Paste relevant output here. `tememory doctor` output is often helpful. Redact any API keys or personal paths. -->
+<!-- Paste relevant output here. `folio doctor` output is often helpful. Redact any API keys or personal paths. -->
 
 ```
 ```
