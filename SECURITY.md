@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please do **not** open a public issue for security vulnerabilities. Report them via [GitHub private security advisories](https://github.com/lincan/folio/security/advisories/new). If that channel is unavailable to you, open an issue with minimal detail and ask for a private contact.
+Please do **not** open a public issue for security vulnerabilities. Report them via [GitHub private security advisories](https://github.com/tempurai/folio/security/advisories/new). If that channel is unavailable to you, open an issue with minimal detail and ask for a private contact.
 
 We aim to acknowledge reports within 72 hours.
 
