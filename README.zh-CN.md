@@ -14,6 +14,22 @@
 2. **统一格式**：所有记忆都是 Markdown + frontmatter，分为四类——`user`（用户偏好）、`feedback`（反馈与教训）、`project`（项目状态与决策）、`reference`（参考资料）。
 3. **通过 MCP 服务回去**：记忆库通过 `folio serve`（stdio MCP server）提供给各 harness；不支持 MCP 的 harness 不做接入。
 
+## 界面截图
+
+<p align="center"><img src="assets/screenshots/desktop-index.png" width="860" alt="记忆库索引页（MEMORY.md quick lookup）"></p>
+<p align="center"><em>记忆库：MEMORY.md 自动生成的索引（quick lookup）</em></p>
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/desktop-file.png" alt="阅读记忆文件"></td>
+    <td><img src="assets/screenshots/desktop-sources.png" alt="来源与 MCP 注册"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>每条记忆就是一个纯 Markdown 文件</em></td>
+    <td align="center"><em>来源：单向导入 + MCP 注册</em></td>
+  </tr>
+</table>
+
 ## 架构
 
 ```

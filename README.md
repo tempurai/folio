@@ -14,6 +14,22 @@ Every harness keeps its own memory/rules store, in incompatible formats that nev
 2. **Unified format**: every memory is Markdown + frontmatter, in one of four types — `user` (user preferences), `feedback` (feedback and lessons learned), `project` (project state and decisions), `reference` (reference material).
 3. **Serve back over MCP**: the bank is exposed to harnesses via `folio serve` (a stdio MCP server); harnesses without MCP support are not integrated.
 
+## Screenshots
+
+<p align="center"><img src="assets/screenshots/desktop-index.png" width="860" alt="Memory bank index (MEMORY.md quick lookup)"></p>
+<p align="center"><em>The memory bank: MEMORY.md auto-generated index (quick lookup)</em></p>
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/desktop-file.png" alt="Reading a memory file"></td>
+    <td><img src="assets/screenshots/desktop-sources.png" alt="Harness sources & MCP registration"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Every memory is a plain Markdown file</em></td>
+    <td align="center"><em>Sources: one-way import + MCP registration</em></td>
+  </tr>
+</table>
+
 ## Architecture
 
 ```
