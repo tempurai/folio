@@ -82,6 +82,14 @@ max_context_size = 262144
 EOF
 echo "kimi config.toml 已写入（provider=kimi, api_key_env）"
 
+# ---------- 1.5 先把 folio MCP 注册进各 harness（任何会话开始前） ----------
+say "1.5 folio install（注册 MCP server）"
+$FOLIO init >/dev/null
+$FOLIO install --all --command "node /workspace/packages/cli/dist/cli.js"
+grep -q '"folio"' "$HOME/.claude.json" && echo "✓ claude ~/.claude.json 有 folio" || fail "claude mcp 注册失败"
+grep -q 'mcp_servers.folio' "$HOME/.codex/config.toml" && echo "✓ codex config.toml 有 folio" || fail "codex mcp 注册失败"
+grep -q '"folio"' "$HOME/.kimi-code/mcp.json" && echo "✓ kimi mcp.json 有 folio" || fail "kimi mcp 注册失败"
+
 # ---------- 2. 真实会话：诱导各 harness 写长期记忆 ----------
 run_claude() {
   say "2a. Claude Code 会话（目标：写 auto memory）"
@@ -95,7 +103,7 @@ run_claude() {
 run_codex() {
   say "2b. Codex 会话（目标：memories 后台提炼）"
   cd "$LAB/proj"
-  KIMI_API_KEY="$KEY" timeout 240 codex exec --skip-git-repo-check "请记住：我所有的提交信息都用英文写。确认后只回复 done。" 2>&1 | tail -3
+  KIMI_API_KEY="$KEY" timeout 240 codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox "请记住：我所有的提交信息都用英文写。确认后只回复 done。" 2>&1 | tail -3
   echo "--- codex memories 目录:"; find "$HOME/.codex/memories" -name '*.md' 2>/dev/null | head -5
 }
 
@@ -110,6 +118,50 @@ if [ -n "$KEY" ]; then
   run_claude; run_codex; run_kimi
 else
   say "2. 跳过真实会话（无 key）"
+fi
+
+# ---------- 2.5 MCP 方向：harness 通过 MCP 读写统一库 ----------
+run_mcp_phase() {
+  say "2.5 harness 经 MCP 读写统一记忆库"
+
+  local PROMPT_W='你现在接入了一个叫 folio 的 MCP server（工具前缀 mcp__folio__ 或 folio.）。请务必实际调用它的 memory_write 工具写入这条记忆：「部署生产前必须先跑 pnpm -r build」。然后实际调用 memory_search 搜索「部署」。最后只回复你搜到的记忆标题。'
+  local PROMPT_R='你现在接入了一个叫 folio 的 MCP server。请务必实际调用它的 memory_search 工具搜索「部署」，并把搜到的记忆内容原样告诉我。'
+
+  say "2.5a. Claude Code 经 MCP 写入"
+  # 用全新项目目录（claude 对项目有会话状态残留，旧目录里 MCP 工具注册偶发缺失）
+  local P2="$LAB/proj-mcp" && mkdir -p "$P2" && cd "$P2"
+  local out
+  out=$(ANTHROPIC_BASE_URL="$ANTHROPIC_BASE" ANTHROPIC_API_KEY="$KEY" ANTHROPIC_MODEL="$MODEL" \
+    timeout 240 claude -p "$PROMPT_W" --dangerously-skip-permissions 2>&1 | tail -3)
+  echo "$out"
+  # claude 偶发首轮 MCP 连接失败：库内无新增则换个全新目录重试一次
+  if ! $FOLIO search "部署" --json 2>/dev/null | grep -q '部署'; then
+    echo "（claude 首轮未写入，换全新目录重试一次）"
+    mkdir -p "$LAB/proj-mcp2" && cd "$LAB/proj-mcp2"
+    ANTHROPIC_BASE_URL="$ANTHROPIC_BASE" ANTHROPIC_API_KEY="$KEY" ANTHROPIC_MODEL="$MODEL" \
+      timeout 240 claude -p "$PROMPT_W" --dangerously-skip-permissions 2>&1 | tail -3
+  fi
+
+  say "2.5b. Kimi Code 经 MCP 写入+读取"
+  KIMI_API_KEY="$KEY" timeout 240 kimi -p "$PROMPT_W" 2>&1 | tail -4
+
+  say "2.5c. Codex 经 MCP 读取（验证跨 harness 可见，此时库内应有内容）"
+  KIMI_API_KEY="$KEY" timeout 240 codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox "$PROMPT_R" 2>&1 | tail -4
+
+  echo "--- folio 库内经 MCP 写入的记忆:"
+  $FOLIO list --json | python3 -c "
+import json, sys
+items = json.load(sys.stdin)
+mcp_items = [i for i in items if (i.get('source') or {}).get('harness') == 'mcp']
+print(f'MCP 来源记忆 {len(mcp_items)} 条')
+for i in mcp_items: print(' -', i.get('title'), '|', i.get('id'))
+sys.exit(0 if mcp_items else 1)
+" || fail "没有经 MCP 写入的记忆（harness 未实际调用工具）"
+  $FOLIO search "部署" --json | grep -q '部署' && echo "✓ 统一库可搜到 MCP 写入的记忆" || fail "搜不到 MCP 写入的记忆"
+}
+
+if [ -n "$KEY" ]; then
+  run_mcp_phase
 fi
 
 # ---------- 3. folio 同步并断言 ----------

@@ -221,6 +221,8 @@ Third-party key configuration per harness (verified in the lab):
 
 Cursor and ZCode are GUI desktops with no headless mode; they are out of lab scope (their adapters are covered by fixtures + e2e).
 
+Field notes: ① Claude Code's headless mode (`claude -p`) has a known flaky MCP tool-registration race — the server shows Connected and its resource is visible, but the tool list occasionally misses the session; retrying or using a fresh project directory recovers. ② Current Kimi Code has no long-term memory files (the official data-locations doc lists no memories/ directory); its adapter is future-proofing for when the feature lands. ③ Whether a model calls MCP tools is inherently stochastic — the lab's hard assertion is "at least one harness completes a real write".
+
 ## Desktop app (in development)
 
 `packages/desktop` (`@folio/desktop`) is the Electron desktop app for folio. The renderer is a 1:1 port of the `gui-mock/` design prototype (Vite + React 18 + Tailwind 3 + shadcn); all data is produced for real by `@folio/core` over IPC.

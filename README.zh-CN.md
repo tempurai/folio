@@ -219,6 +219,8 @@ docker run --rm --env-file /tmp/folio-lab.env folio-harness-lab
 
 Cursor / ZCode 是 GUI 桌面端，无 headless 运行方式，不在联调范围（适配器由 fixtures + e2e 覆盖）。
 
+实测备注：① Claude Code 的 headless 模式（`claude -p`）对 MCP 工具的注册存在已知的偶发时序问题——server 显示 Connected 且资源可见，但工具列表偶尔不进会话，重试或换全新项目目录可恢复；② Kimi Code 当前版本没有长期记忆文件机制（官方 data-locations 文档无 memories/ 目录），其适配器是为该功能上线预备的；③ 模型是否调用 MCP 工具本身有随机性，lab 的硬断言是「至少一家完成真实写入」。
+
 ## 桌面端（开发中）
 
 `packages/desktop`（`@folio/desktop`）是 folio 的 Electron 桌面端，渲染层 1:1 移植自 `gui-mock/` 设计原型（Vite + React 18 + Tailwind 3 + shadcn），数据全部由 `@folio/core` 经 IPC 真实产出。
