@@ -201,6 +201,26 @@ The image globally installs real harness CLIs (`@anthropic-ai/claude-code`, `@op
 
 Note: `@moonshot-ai/kimi-code` requires Node ≥ 22.5 at runtime (it uses `createZstdDecompress` from `node:zlib`), so on the node:20 base only the install check passes and `--version` fails; the build report marks it `installed-but-run-failed` as expected, without affecting the rest of the verification.
 
+## Real-harness lab (optional)
+
+`docker/Dockerfile.harness-lab` + `docker/harness-lab.sh` spin up a lab with real models: the container installs Claude Code / Codex / Kimi Code, configures a third-party API key per each vendor's docs (all three can share one Kimi Code subscription key — `api.kimi.com/coding` exposes both an Anthropic-compatible and an OpenAI/Responses-compatible endpoint), runs one real session per harness that induces a long-term memory write, then verifies folio imports it and serves it over MCP:
+
+```bash
+docker build -f docker/Dockerfile.harness-lab -t folio-harness-lab .
+echo "KIMI_API_KEY=sk-..." > /tmp/folio-lab.env   # key never enters the image or the repo
+docker run --rm --env-file /tmp/folio-lab.env folio-harness-lab
+```
+
+Third-party key configuration per harness (verified in the lab):
+
+| Harness | Configuration |
+|---|---|
+| Claude Code | `ANTHROPIC_BASE_URL=https://api.kimi.com/coding/` + `ANTHROPIC_API_KEY`, plus the `~/.claude.json` onboarding-skip flags (see the lab script) |
+| Codex | `[model_providers.kimi]` in `~/.codex/config.toml`: `base_url` + `env_key` (key read from env) + `wire_api = "responses"`; `[features] memories = true` enables memory |
+| Kimi Code | `[providers.kimi]` in `~/.kimi-code/config.toml`: `type = "kimi"` + `base_url` + `api_key_env` |
+
+Cursor and ZCode are GUI desktops with no headless mode; they are out of lab scope (their adapters are covered by fixtures + e2e).
+
 ## Desktop app (in development)
 
 `packages/desktop` (`@folio/desktop`) is the Electron desktop app for folio. The renderer is a 1:1 port of the `gui-mock/` design prototype (Vite + React 18 + Tailwind 3 + shadcn); all data is produced for real by `@folio/core` over IPC.

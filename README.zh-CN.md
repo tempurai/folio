@@ -199,6 +199,26 @@ docker run --rm folio-e2e                          # 容器内跑 init→sync→
 
 注：`@moonshot-ai/kimi-code` 的运行时需要 Node ≥ 22.5（用了 `node:zlib` 的 `createZstdDecompress`），在 node:20 基座上只能完成安装验证、`--version` 会报错，构建报告会如实标注 `installed-but-run-failed`，属预期行为，不影响其余验证。
 
+## Harness 真实联调（可选）
+
+`docker/Dockerfile.harness-lab` + `docker/harness-lab.sh` 是带真实模型的联调环境：容器内安装 Claude Code / Codex / Kimi Code，按各家官方文档配置第三方 API key（三者共用一把 Kimi Code 订阅 key——`api.kimi.com/coding` 同时提供 Anthropic 兼容与 OpenAI/Responses 兼容端点），各跑一个真实会话诱导其写入长期记忆，然后验证 folio 收编 + MCP 服务链路：
+
+```bash
+docker build -f docker/Dockerfile.harness-lab -t folio-harness-lab .
+echo "KIMI_API_KEY=sk-..." > /tmp/folio-lab.env   # key 不落镜像、不进仓库
+docker run --rm --env-file /tmp/folio-lab.env folio-harness-lab
+```
+
+各 harness 的三方 key 配法（已在联调中实测）：
+
+| Harness | 配法 |
+|---|---|
+| Claude Code | `ANTHROPIC_BASE_URL=https://api.kimi.com/coding/` + `ANTHROPIC_API_KEY`，外加写入 `~/.claude.json` 的 onboarding 跳过标记（见 lab 脚本） |
+| Codex | `~/.codex/config.toml` 的 `[model_providers.kimi]`：`base_url` + `env_key` 读环境变量 + `wire_api = "responses"`；`[features] memories = true` 开记忆 |
+| Kimi Code | `~/.kimi-code/config.toml` 的 `[providers.kimi]`：`type = "kimi"` + `base_url` + `api_key_env` |
+
+Cursor / ZCode 是 GUI 桌面端，无 headless 运行方式，不在联调范围（适配器由 fixtures + e2e 覆盖）。
+
 ## 桌面端（开发中）
 
 `packages/desktop`（`@folio/desktop`）是 folio 的 Electron 桌面端，渲染层 1:1 移植自 `gui-mock/` 设计原型（Vite + React 18 + Tailwind 3 + shadcn），数据全部由 `@folio/core` 经 IPC 真实产出。

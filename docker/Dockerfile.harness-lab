@@ -1,0 +1,30 @@
+# Harness 真实联调环境：真装各家 harness CLI + 构建 folio，由 harness-lab.sh 驱动
+# 构建：docker build -f docker/Dockerfile.harness-lab -t folio-harness-lab .
+# 运行：docker run --rm --env-file <含 KIMI_API_KEY 的文件> folio-harness-lab
+FROM node:22-bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates curl jq python3 && rm -rf /var/lib/apt/lists/*
+
+# pnpm（与仓库锁定版本一致）
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+
+# 真实 harness CLI（逐包容错，不因单家失败拖垮镜像）
+RUN set -e; \
+    npm i -g @anthropic-ai/claude-code && (claude --version || true) && \
+    npm i -g @openai/codex && (codex --version || true) && \
+    npm i -g @moonshot-ai/kimi-code && (kimi --version || kimi-code --version || true)
+
+# 构建 folio（含 desktop 在内的全 workspace）
+COPY . /workspace
+WORKDIR /workspace
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
+RUN pnpm install --frozen-lockfile || pnpm install
+RUN pnpm -r build
+
+# claude-code 拒绝以 root 运行 --dangerously-skip-permissions：建非特权用户跑会话
+RUN useradd -m -s /bin/bash lab && mkdir -p /tmp/lab && chown -R lab:lab /tmp/lab
+USER lab
+
+ENTRYPOINT ["bash", "/workspace/docker/harness-lab.sh"]
+

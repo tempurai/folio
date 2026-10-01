@@ -37,10 +37,14 @@ async function collect(_ctx: CollectContext): Promise<RawMemoryItem[]> {
     }
   }
 
-  // ② memories/；memories_extensions/ 是屏幕上下文（敏感），绝不收集；
+  // ② memories/；memories_extensions/ 是屏幕上下文（敏感），memories/extensions/ 是插件
+  // 指令（实跑观察：codex 会把插件 skill 文件写进这里，不是用户记忆），两者都绝不收集；
   // sessions/config/history 等其他目录一律不碰
   for (const file of walkMarkdown(join(home, 'memories'), {
-    skip: (relPath) => relPath.split(sep).includes('memories_extensions'),
+    skip: (relPath) => {
+      const parts = relPath.split(sep);
+      return parts.includes('memories_extensions') || parts.includes('extensions');
+    },
   })) {
     const read = tryReadMarkdownItem(file);
     if (!read) continue;

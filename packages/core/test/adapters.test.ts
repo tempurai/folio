@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, join } from 'node:path';
+import { basename, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseToml } from 'smol-toml';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -194,9 +194,12 @@ describe('codex', () => {
       scope: 'project:my-app',
     });
 
-    // memories_extensions（屏幕上下文，敏感）与 sessions 绝不收集
+    // memories_extensions（屏幕上下文，敏感）、memories/extensions（插件指令，非用户记忆）
+    // 与 sessions 绝不收集
     expect(byBase(items, 'screen.md')).toBeUndefined();
+    expect(byBase(items, 'instructions.md')).toBeUndefined();
     expect(items.some((item) => item.sourcePath.includes('memories_extensions'))).toBe(false);
+    expect(items.some((item) => item.sourcePath.includes(`memories${sep}extensions`))).toBe(false);
     expect(items.some((item) => item.sourcePath.includes('sessions'))).toBe(false);
   });
 
