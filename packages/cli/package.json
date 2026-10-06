@@ -1,6 +1,6 @@
 {
   "name": "folio-memory",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "description": "folio — unified local memory library for AI coding harnesses (file-based, MCP-served). CLI: init, sync, watch, organize, serve.",
   "license": "MIT",
