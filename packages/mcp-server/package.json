@@ -1,6 +1,6 @@
 {
   "name": "@folio/mcp-server",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "stdio MCP server for folio: serves the local memory bank as 5 tools plus a memory://index resource.",

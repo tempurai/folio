@@ -1,0 +1,87 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # 创建 GitHub release
+  id-token: write # npm trusted publishing (OIDC)，配置后生效
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+      - run: pnpm test
+
+  e2e:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f docker/Dockerfile -t folio-e2e .
+      - run: docker run --rm folio-e2e
+
+  release:
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+      # CLI 是自包含单文件（零运行时依赖，Node ≥18 即可跑），打成 tar.gz 作为 release 制品
+      - name: package CLI artifact
+        run: |
+          set -euo pipefail
+          V="${GITHUB_REF_NAME}"
+          STAGE="dist-release/folio-${V}"
+          mkdir -p "$STAGE"
+          cp packages/cli/dist/cli.js "$STAGE/folio"
+          chmod +x "$STAGE/folio"
+          cp LICENSE "$STAGE/"
+          cat > "$STAGE/INSTALL.txt" <<'EOF'
+          folio — unified local memory library for AI coding harnesses
+          用法（需要 Node ≥ 18）：
+            chmod +x folio && ./folio --help
+          或放进 PATH：
+            sudo install -m 755 folio /usr/local/bin/folio
+          也可以直接走 npm：npm i -g folio-memory
+          EOF
+          tar czf "folio-${V}-anynode.tar.gz" -C dist-release "folio-${V}"
+          ls -lh "folio-${V}-anynode.tar.gz"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: folio-*.tar.gz
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+  publish-npm:
+    needs: release
+    runs-on: ubuntu-latest
+    # 待 npm 包页配好 trusted publisher（需先手动首发一次）后移除 continue-on-error
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: npm i -g npm@latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+      - run: npm publish --provenance --access public
+        working-directory: packages/cli

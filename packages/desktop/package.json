@@ -1,6 +1,6 @@
 {
   "name": "@folio/desktop",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Electron desktop app for folio: browse, search, edit, and organize the local AI-coding memory bank (in development).",

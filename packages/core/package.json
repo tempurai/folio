@@ -1,6 +1,6 @@
 {
   "name": "@folio/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Domain core for folio: harness adapters, file-based memory store, incremental sync, full-text search, LLM-assisted organize, and MCP install helpers.",
