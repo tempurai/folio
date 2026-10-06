@@ -52,6 +52,7 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile || pnpm install
 RUN pnpm -r build
-RUN pnpm -r test
+# 用根脚本串行跑测试（desktop/cli 的 pretest 会重建 core dist，并发会与 mcp-server 收集赛跑）
+RUN pnpm test
 
 ENTRYPOINT ["bash", "/workspace/docker/e2e.sh"]
