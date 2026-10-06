@@ -42,22 +42,28 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
-      # CLI 是自包含单文件（零运行时依赖，Node ≥18 即可跑），打成 tar.gz 作为 release 制品
+      # CLI 是自包含单文件（零运行时依赖，Node ≥18 即可跑）；配 .mjs 扩展名 + shell 包装器保证裸跑
       - name: package CLI artifact
         run: |
           set -euo pipefail
           V="${GITHUB_REF_NAME}"
           STAGE="dist-release/folio-${V}"
           mkdir -p "$STAGE"
-          cp packages/cli/dist/cli.js "$STAGE/folio"
+          cp packages/cli/dist/cli.js "$STAGE/folio.mjs"
+          cp packages/cli/package.json "$STAGE/"   # cli 的版本探测读同目录 package.json
+          cat > "$STAGE/folio" <<'EOF'
+          #!/bin/sh
+          # folio 启动器：把同目录的 folio.mjs 交给 node 执行
+          exec node "$(dirname "$0")/folio.mjs" "$@"
+          EOF
           chmod +x "$STAGE/folio"
           cp LICENSE "$STAGE/"
           cat > "$STAGE/INSTALL.txt" <<'EOF'
           folio — unified local memory library for AI coding harnesses
           用法（需要 Node ≥ 18）：
             chmod +x folio && ./folio --help
-          或放进 PATH：
-            sudo install -m 755 folio /usr/local/bin/folio
+          或把 folio 与 folio.mjs 一起放进 PATH（两者须同目录）：
+            sudo install -m 755 folio folio.mjs /usr/local/bin/
           也可以直接走 npm：npm i -g folio-memory
           EOF
           tar czf "folio-${V}-anynode.tar.gz" -C dist-release "folio-${V}"

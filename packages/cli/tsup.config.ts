@@ -8,6 +8,7 @@ export default defineConfig({
   target: 'node18',
   dts: false,
   clean: true,
+  splitting: false, // 真·单文件产物（release 制品与 npm 包都只发一个 cli.js）
   noExternal: [
     /^@folio\//,
     /^@modelcontextprotocol\/sdk/,
